@@ -1,51 +1,51 @@
+import RandGenerator.GaussianRandomGenerator;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
+
 
 public class test {
-    public test(){
-        BufferedImage image = null;
-        File f = null;
-        int w = 0, h = 0;
-        try{
-            image = ImageIO.read(new File("images/Untitled.jpg"));
-            System.out.println("DONE");
-            w = image.getWidth();
-            h = image.getHeight();
-            System.out.println("Wymiary obrazu: ");
-            System.out.println("Width: " + w);
-            System.out.println("Height: " + h);
-            //Integer[][] binaryArr = new Integer[w][h];
-//            for (int i = 0; i < h; i++) {
-//                for (int j = 0; j < w; j++) {
-//                    binaryArr[j][i] = image.getRGB(j, i);
-//                }
-//            }
-            var pixelArr = new Pixel[w][h];
-            for (int i = 0; i < h; i++) {
-                for (int j = 0; j < w; j++) {
-                    pixelArr[j][i] = new Pixel(image.getRGB(j, i));
-                }
-            }
-            for (int i = 0; i < h; i++) {
-                for (int j = 0; j < w; j++) {
-                    System.out.print(pixelArr[j][i]);
-                    System.out.print(" ");
-                }
-                System.out.println();
-            }
+    public static void main(String[] args){
+/*        SortedMap<Double, Integer> map = new TreeMap<>(Collections.reverseOrder());
+        map.put(23.43, 4);
+        map.put(223.43, 2);
+        map.put(-23.43, 3);
+        map.put(33.43, 1);
+        map.put(93.43, 5);
 
-            BufferedImage boutput = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-            for (int i = 0; i < h; i++) {
-                for (int j = 0; j < w; j++) {
-                    boutput.setRGB(j, i, pixelArr[j][i].getBinaryPixel());
-                }
+        System.out.println(map);
+
+        System.out.println(map.get(map.firstKey()));
+        map.remove(map.firstKey());
+        System.out.println(map.get(map.firstKey()));
+        map.remove(map.firstKey());
+        System.out.println(map.get(map.firstKey()));*/
+
+        int[] d = new int[6];
+        d[0] = 12;
+        d[1] = -23;
+        d[2] = 0;
+        d[3] = -2;
+        d[4] = -23;
+        d[5] = -21;
+        int minDistance = Integer.MAX_VALUE;
+        int secondMinDistance = Integer.MAX_VALUE;
+        int minIndex = 0;
+        for (int i = 0; i < 6; i++) {
+            if (d[i] < minDistance) {
+                secondMinDistance = minDistance;
+                minDistance = d[i];
+                minIndex = i;
+            } else if (d[i] < secondMinDistance) {
+                secondMinDistance = d[i];
             }
-            File output = new File("images/output.png");
-            ImageIO.write(boutput, "png", output);
-        }catch(IOException e){
-            System.out.println("Error: " + e);
         }
+
+        System.out.println("Min: " + minDistance);
+        System.out.println("Scnd -min: " + secondMinDistance);
     }
 }
