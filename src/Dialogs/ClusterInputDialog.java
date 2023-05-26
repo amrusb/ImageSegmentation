@@ -6,18 +6,19 @@ import java.awt.*;
 public class ClusterInputDialog extends JDialog {
     //private JTextField clusterCountField = new JTextField(3);;
     private final JComboBox<Integer> clusterCountBox = new JComboBox<>();
+    private final JCheckBox imageSource = new JCheckBox("Segmentuj oryginalne wymiary");
     private final JButton submitButton = new JButton("Zatwierdź");
+
     private int clusterCount;
 
-    public ClusterInputDialog(Frame parent) {
+    public ClusterInputDialog(JFrame parent, boolean hasRescaledImage) {
         super(parent, "K-Means Clustering", true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(300, 150);
+        setSize(300, 200);
         setResizable(false);
         setLocationRelativeTo(parent);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
         var constr = new GridBagConstraints();
         constr.weightx = 100;
         constr.weighty = 100;
@@ -29,7 +30,7 @@ public class ClusterInputDialog extends JDialog {
         constr.insets.set(10,20,5, 20);
 
         JLabel label = new JLabel("Podaj liczbę klastrów:");
-        panel.add(label, constr);
+        add(label, constr);
 
         clusterCountBox.setEditable(true);
         for (int i = 2; i < 11; i++) {
@@ -37,7 +38,13 @@ public class ClusterInputDialog extends JDialog {
         }
         constr.gridy = 1;
         constr.insets.set(5,40,5, 40);
-        panel.add(clusterCountBox, constr);
+        add(clusterCountBox, constr);
+
+        constr.gridy = 2;
+        constr.insets.set(5,20,5, 20);
+        imageSource.setSelected(true);
+        imageSource.setEnabled(hasRescaledImage);
+        add(imageSource, constr);
 
         var buttonPanel = new JPanel();
         submitButton.addActionListener(e -> {
@@ -54,15 +61,15 @@ public class ClusterInputDialog extends JDialog {
             clusterCount = -1;
             dispose();
         });
-        constr.gridy = 2;
+        constr.gridy = 3;
         constr.insets.set(5,20,10, 20);
-        panel.add(buttonPanel, constr);
-
-        add(panel);
+        add(buttonPanel, constr);
     }
 
     public int getClusterCount() {
         return clusterCount;
     }
+
+    public boolean checkImageSource() {return imageSource.isSelected(); }
 
 }

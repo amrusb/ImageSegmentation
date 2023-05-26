@@ -1,3 +1,5 @@
+import ImageOperations.ImageRescaler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -5,9 +7,9 @@ import java.awt.image.BufferedImage;
 public class MainFrame extends JFrame {
     private static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    private static final Font HEADER_FONT = new Font("SansSerif", Font.BOLD, 20);
-    private static final Font HEADER_2_FONT = new Font("SansSerif", Font.BOLD, 13);
-    private static final Font BASIC_FONT = new Font("SansSerif", Font.BOLD, 14);
+    private static final Font HEADER_FONT = new Font("Monospaced", Font.BOLD, 16);
+    private static final Font HEADER_2_FONT = new Font("SansSerif", Font.BOLD, 15);
+    private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
     private static final JLabel imageLabel = new JLabel();
     public MainFrame(){
         setTitle("Segmentacja obrazu");
@@ -23,18 +25,13 @@ public class MainFrame extends JFrame {
         constr.gridx = 0;
         constr.gridy = 0;
         add(imageLabel, constr);
+        imageLabel.setFont(HEADER_FONT);
+        imageLabel.setText("Otwórz plik   CTRL + O");
         setJMenuBar(new MainMenuBar(this));
     }
 
-    public static void setImageLabel(BufferedImage image){
-        Image rescaledImage = rescaleImage(image);
-        ImageIcon imageIcon = new ImageIcon(rescaledImage);
-
-        imageLabel.setIcon(imageIcon);
-    }
-    private static Image rescaleImage(BufferedImage image){
-        Image displayImage = image;
-
+    public static void setImageLabel(BufferedImage image) {
+        imageLabel.setText("");
         int frameWidth = MainFrame.getFrameWidth();
         int frameHeight = MainFrame.getFrameHeight();
 
@@ -43,12 +40,17 @@ public class MainFrame extends JFrame {
 
         if (width >= frameWidth || height >= frameHeight) {
             double scale = Math.min((double) frameWidth / (width), (double) frameHeight / (height));
-            width = (int) (scale * width);
-            height = (int) (scale * height);
-            displayImage = image.getScaledInstance(width, height, Image.SCALE_FAST);
+            BufferedImage displayImage = ImageRescaler.rescaleImage(image, scale);
+            ImageIcon imageIcon = new ImageIcon(displayImage);
+            imageLabel.setIcon(imageIcon);
+            Main.setRescaledImage(displayImage);
         }
-        return  displayImage;
+        else{
+            ImageIcon imageIcon = new ImageIcon(image);
+            imageLabel.setIcon(imageIcon);
+        }
     }
+
     public static int getFrameWidth(){
         return (int)(SCREEN_WIDTH * 3 / 4);
     }
