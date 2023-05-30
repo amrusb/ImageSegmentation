@@ -1,11 +1,13 @@
 package GUIparts;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.text.NumberFormat;
 
 public class ClusterInputDialog extends JDialog {
-    //private JTextField clusterCountField = new JTextField(3);;
-    private final JComboBox<Integer> clusterCountBox = new JComboBox<>();
+    private final JFormattedTextField clusterCountField;
+    private final JSlider slider = new JSlider(2, 30, 6);
     private final JCheckBox imageSource = new JCheckBox("Segmentuj oryginalne wymiary");
     private final JButton submitButton = new JButton("Zatwierdź");
 
@@ -14,7 +16,7 @@ public class ClusterInputDialog extends JDialog {
     public ClusterInputDialog(JFrame parent, boolean hasRescaledImage) {
         super(parent, "K-Means Clustering", true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(300, 200);
+        setSize(420, 320);
         setResizable(false);
         setLocationRelativeTo(parent);
 
@@ -25,23 +27,49 @@ public class ClusterInputDialog extends JDialog {
 
         constr.gridx = 0;
         constr.gridy = 0;
-        constr.gridwidth = 2;
+        constr.gridwidth = 1;
         constr.gridheight = 1;
+        constr.fill = GridBagConstraints.HORIZONTAL;
         constr.insets.set(10,20,5, 20);
 
         JLabel label = new JLabel("Podaj liczbę klastrów:");
         add(label, constr);
 
-        clusterCountBox.setEditable(true);
-        for (int i = 2; i < 11; i++) {
-            clusterCountBox.addItem(i);
-        }
         constr.gridy = 1;
-        constr.insets.set(5,40,5, 40);
-        add(clusterCountBox, constr);
+        constr.fill = GridBagConstraints.BOTH;
+        constr.insets.set(10,180,5, 180);
+        NumberFormat longFormat = NumberFormat.getIntegerInstance();
+
+        NumberFormatter numberFormatter = new NumberFormatter(longFormat);
+
+        numberFormatter.setAllowsInvalid(false);
+        clusterCountField =  new JFormattedTextField(numberFormatter);
+        clusterCountField.setText("6");
+        numberFormatter.setMinimum(0L);
+        clusterCountField.setEditable(true);
+        add(clusterCountField, constr);
 
         constr.gridy = 2;
+        constr.fill = GridBagConstraints.HORIZONTAL;
+        constr.insets.set(5,10,5, 10);
+
+        slider.setPaintTicks(true);
+        slider.setSnapToTicks(true);
+        slider.setMajorTickSpacing(4);
+        slider.setMinorTickSpacing(1);
+        slider.setSnapToTicks(true);
+        slider.setPaintLabels(true);
+        slider.addChangeListener(e->{
+            JSlider source = (JSlider) e.getSource();
+            clusterCountField.setText("" + source.getValue());
+        });
+        add(slider, constr);
+
+        constr.gridy = 3;
+        constr.gridheight = 1;
+        constr.gridwidth = 1;
         constr.insets.set(5,20,5, 20);
+        constr.fill = GridBagConstraints.NONE;
         imageSource.setSelected(true);
         imageSource.setEnabled(hasRescaledImage);
         add(imageSource, constr);
@@ -49,8 +77,7 @@ public class ClusterInputDialog extends JDialog {
         var buttonPanel = new JPanel();
         submitButton.addActionListener(e -> {
             if (e.getSource() == submitButton) {
-
-                clusterCount =  (int)clusterCountBox.getSelectedItem();
+                clusterCount =  Integer.parseInt(clusterCountField.getText());
                 dispose();
             }
         });
@@ -61,7 +88,7 @@ public class ClusterInputDialog extends JDialog {
             clusterCount = -1;
             dispose();
         });
-        constr.gridy = 3;
+        constr.gridy = 4;
         constr.insets.set(5,20,10, 20);
         add(buttonPanel, constr);
     }

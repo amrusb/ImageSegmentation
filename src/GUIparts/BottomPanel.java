@@ -5,16 +5,15 @@ import javax.swing.border.Border;
 import java.awt.*;
 
 public class BottomPanel extends JPanel {
-    private static JLabel fileName = new JLabel();
-    private static JLabel durationInfo = new JLabel("Czas trwania algorytmu:");
-    private static JLabel durationTime = new JLabel();
-    private static JProgressBar progressBar = new JProgressBar();
-    private Font BOTTOM_FONT = new Font("SansSerif", Font.PLAIN, 12);
-    private Font BOTTOM_FONT2 = new Font("Monospaced",  Font.PLAIN, 13);
+    private static final JLabel fileNameInfo = new JLabel("Nazwa pliku:");
+    private static final JLabel fileName = new JLabel();
+    private static final JLabel durationInfo = new JLabel("Czas trwania algorytmu:");
+    private static final JLabel durationTime = new JLabel();
+    private static final JProgressBar progressBar = new JProgressBar();
+    private static final JLabel progressLabel = new JLabel();
 
     public BottomPanel(){
         setLayout(new GridBagLayout());
-        //Border border = BorderFactory.createLineBorder(Color.GRAY, 1);
         Border border = BorderFactory.createEtchedBorder();
         setBorder(border);
         var constraints = new GridBagConstraints();
@@ -27,21 +26,24 @@ public class BottomPanel extends JPanel {
         constraints.gridwidth = 1;
         constraints.anchor = GridBagConstraints.EAST;
         constraints.insets.set(2, 5,2, 2);
-        var fileNameInfo = new JLabel("Nazwa pliku:");
+        Font BOTTOM_FONT = new Font("SansSerif", Font.PLAIN, 12);
         fileNameInfo.setFont(BOTTOM_FONT);
-
+        fileNameInfo.setVisible(false);
         add(fileNameInfo, constraints);
         constraints.gridx = 1;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.insets.set(2, 5,2, 10);
         add(fileName, constraints);
+        Font BOTTOM_FONT2 = new Font("Monospaced", Font.PLAIN, 13);
         fileName.setFont(BOTTOM_FONT2);
+        fileName.setVisible(false);
 
         constraints.gridx = 2;
         constraints.insets.set(2, 10,2, 5);
         constraints.anchor = GridBagConstraints.EAST;
         add(durationInfo, constraints);
         durationInfo.setFont(BOTTOM_FONT);
+        durationInfo.setVisible(false);
         constraints.gridx = 3;
         constraints.insets.set(2, 5,2, 10);
         constraints.anchor = GridBagConstraints.WEST;
@@ -49,11 +51,17 @@ public class BottomPanel extends JPanel {
 
         durationTime.setFont(BOTTOM_FONT2);
 
+        progressLabel.setFont(BOTTOM_FONT);
+        constraints.gridx = 4;
+        constraints.gridwidth = 1;
+        constraints.anchor = GridBagConstraints.EAST;
+        constraints.insets.set(2, 10,2, 4);
+        add(progressLabel, constraints);
+
         constraints.gridx = 5;
         constraints.gridwidth = 6;
         constraints.fill = GridBagConstraints.HORIZONTAL;
-        //constraints.anchor = GridBagConstraints.EAST;
-        constraints.insets.set(2, 10,2, 5);
+        constraints.insets.set(2, 4,2, 5);
         add(progressBar, constraints);
         progressBar.setMinimum(0);
         progressBar.setStringPainted(true);
@@ -78,13 +86,24 @@ public class BottomPanel extends JPanel {
     }
     public static void setProgressBarVisible(boolean flag){
         progressBar.setVisible(flag);
+        progressLabel.setVisible(flag);
+    }
+    public static void setProgressLabel(String label){
+        progressLabel.setText(label);
     }
     public static void setDurationInfoVisible(boolean flag){
         durationInfo.setVisible(flag);
+        durationTime.setVisible(flag);
+    }
+
+    public static void setFileNameVisible(boolean flag){
+        fileName.setVisible(flag);
+        fileNameInfo.setVisible(flag);
     }
     public static void clear(){
         fileName.setText("");
         durationTime.setText("");
+        setProgressLabel("");
         setProgress(0);
     }
 }

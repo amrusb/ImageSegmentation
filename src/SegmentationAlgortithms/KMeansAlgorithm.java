@@ -9,6 +9,7 @@ import Utils.Cluster;
 import Utils.Pixel;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -126,7 +127,7 @@ public class KMeansAlgorithm {
 
         BottomPanel.setProgress(0);
         BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);
-
+        BottomPanel.setProgressLabel("K-means...");
         for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -245,13 +246,14 @@ public class KMeansAlgorithm {
         Arrays.fill(distances, Double.MAX_VALUE);
 
         BottomPanel.setProgressMaximum(clustersCount - 1);
+        BottomPanel.setProgressLabel("Inicjalizajca klastrów...");
         main_for:
         for (int i = 1; i < clustersCount; i++) {
-            int interation = i;
+            int iteration = i;
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    BottomPanel.setProgress(interation);
+                    BottomPanel.setProgress(iteration);
                 }
             });
             double sum = 0.0;

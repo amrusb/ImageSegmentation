@@ -9,7 +9,6 @@ public class MainFrame extends JFrame {
     private static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     private static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     private static final Font HEADER_FONT = new Font("Monospaced", Font.BOLD, 16);
-    private static final Font HEADER_2_FONT = new Font("SansSerif", Font.BOLD, 15);
     private static final Font BASIC_FONT = new Font("SansSerif", Font.PLAIN, 14);
     private static final JLabel imageLabel = new JLabel();
     public MainFrame(){
@@ -23,11 +22,11 @@ public class MainFrame extends JFrame {
         setLayout(new BorderLayout());
         var mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
-        var constr = new GridBagConstraints();
-        constr.anchor = GridBagConstraints.CENTER;
-        constr.gridx = 0;
-        constr.gridy = 0;
-        mainPanel.add(imageLabel, constr);
+        var constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        mainPanel.add(imageLabel, constraints);
         add(mainPanel, BorderLayout.CENTER);
         imageLabel.setFont(HEADER_FONT);
         imageLabel.setText("Otwórz plik   CTRL + O");
@@ -63,10 +62,6 @@ public class MainFrame extends JFrame {
     public static int getFrameHeight(){
         return (int)(SCREEN_HEIGHT * 3 / 4);
     }
-
-    public static Font getHeaderFont(){return HEADER_FONT; }
-
-    public static Font getHeader2Font() {return HEADER_2_FONT;}
 
     public static Font getBasicFont() {return BASIC_FONT;}
 

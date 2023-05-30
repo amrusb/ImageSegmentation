@@ -76,7 +76,7 @@ public class RegionChooseDialog extends JDialog {
             g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 
             for (Ellipse2D circle: circles) {
-                g2.setPaint(Color.WHITE);
+                g2.setPaint(new Color(255, 255, 255, 80));
                 g2.fill(circle);
                 g2.setPaint(Color.BLACK);
                 g2.draw(circle);

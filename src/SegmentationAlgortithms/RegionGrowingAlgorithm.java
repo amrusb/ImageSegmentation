@@ -39,6 +39,7 @@ public class RegionGrowingAlgorithm {
     private void standardRegionGrowing( ArrayList<Point> seeds){
         BottomPanel.setProgress(0);
         BottomPanel.setProgressMaximum(seeds.size() - 1);
+        BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
 
             SwingUtilities.invokeLater(new Runnable() {
@@ -94,6 +95,7 @@ public class RegionGrowingAlgorithm {
     private void graySpaceRegionGrowing(ArrayList<Point> seeds){
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(seeds.size());
+        BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
@@ -155,6 +157,7 @@ public class RegionGrowingAlgorithm {
     private void comboRegionGrowing(ArrayList<Point> seeds){
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(seeds.size());
+        BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
