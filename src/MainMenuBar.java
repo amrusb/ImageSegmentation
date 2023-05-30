@@ -1,5 +1,6 @@
-import Dialogs.ClusterInputDialog;
-import Dialogs.RegionChooseDialog;
+import GUIparts.BottomPanel;
+import GUIparts.ClusterInputDialog;
+import GUIparts.RegionChooseDialog;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageRescaler;
 import SegmentationAlgortithms.KMeansAlgorithm;
@@ -12,7 +13,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 
 public class MainMenuBar extends JMenuBar {
     private static final JMenu programMenu = new JMenu("Program");
@@ -46,8 +46,11 @@ public class MainMenuBar extends JMenuBar {
             int result = imageChooser.showOpenDialog(null);
             frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if(result == JFileChooser.APPROVE_OPTION){
-                String filePath = imageChooser.getSelectedFile().getAbsolutePath();
+                BottomPanel.clear();
+                String fileName = imageChooser.getSelectedFile().getName();
+                BottomPanel.setFileName(fileName);
 
+                String filePath = imageChooser.getSelectedFile().getAbsolutePath();
                 ImageReader.setFilePath(filePath);
                 Main.setImage(ImageReader.readImage());
 
@@ -116,31 +119,37 @@ public class MainMenuBar extends JMenuBar {
             int clusterCount = dialog.getClusterCount();
             boolean original = dialog.checkImageSource();
 
-            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if(clusterCount > 0){
-                KMeansAlgorithm segmentation;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        BottomPanel.setProgressBarVisible(true);
+                        KMeansAlgorithm segmentation;
 
-                if (original) segmentation = new KMeansAlgorithm(clusterCount, Main.getImage());
-                else segmentation = new KMeansAlgorithm(clusterCount, Main.getRescaledImage());
+                        long start = System.currentTimeMillis();
+                        if (original) segmentation = new KMeansAlgorithm(clusterCount, Main.getImage());
+                        else segmentation = new KMeansAlgorithm(clusterCount, Main.getRescaledImage());
 
-                long start = System.currentTimeMillis();
-                segmentation.hamerlySegmentation();
-                long elapsedTimeMillis = System.currentTimeMillis()-start;
-                float elapsedTimeSec = elapsedTimeMillis/1000F;
+                        long elapsedTimeMillis = System.currentTimeMillis()-start;
+                        float elapsedTimeSec = elapsedTimeMillis/1000F;
+                        System.out.println("Czas trwania algortymu: " + elapsedTimeSec + " sec");
+                        BottomPanel.setDurationTime(elapsedTimeSec);
 
-                System.out.println("Czas trwania algortymu: " + elapsedTimeSec + " sec");
-                undo.setEnabled(true);
-                BufferedImage output = segmentation.getOutputImage();
+                        undo.setEnabled(true);
+                        BufferedImage output = segmentation.getOutputImage();
 
-                MainFrame.setImageLabel(output);
-                if (!original){
-                    double scale = (double)Main.getImage().getWidth() / (double)output.getWidth();
-                    output = ImageRescaler.rescaleImage(output, scale);
-                }
-                Main.setSegmentedImage(output);
-
+                        MainFrame.setImageLabel(output);
+                        if (!original){
+                            double scale = (double)Main.getImage().getWidth() / (double)output.getWidth();
+                            output = ImageRescaler.rescaleImage(output, scale);
+                        }
+                        Main.setSegmentedImage(output);
+                        frame.setCursor(Cursor.getDefaultCursor());
+                        BottomPanel.setProgressBarVisible(false);
+                    }
+                }).start();
             }
-            frame.setCursor(Cursor.getDefaultCursor());
         });
         segmentationMenu.setFont(MainFrame.getBasicFont());
         kmeanItem.setFont(MainFrame.getBasicFont());
@@ -152,6 +161,7 @@ public class MainMenuBar extends JMenuBar {
                 Main.setImage(Main.getSegmentedImage());
             }
             BufferedImage working_image;
+
             if(Main.hasRescaledImage()) working_image = Main.getRescaledImage();
             else working_image = Main.getImage();
 
@@ -161,22 +171,30 @@ public class MainMenuBar extends JMenuBar {
             RegionChooseDialog dialog = new RegionChooseDialog(owner, working_image, scale);
             dialog.setVisible(true);
             var seedsArray = dialog.getRegions();
-            System.out.println(seedsArray.toString());
-            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
             if(seedsArray.size() > 0){
-                long start = System.currentTimeMillis();
-                var segmentation = new RegionGrowingAlgorithm(Main.getImage(), seedsArray);
-                undo.setEnabled(true);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        BottomPanel.setProgressBarVisible(true);
+                        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        long start = System.currentTimeMillis();
+                        var segmentation = new RegionGrowingAlgorithm(Main.getImage(), seedsArray);
+                        undo.setEnabled(true);
 
-                long elapsedTimeMillis = System.currentTimeMillis()-start;
-                float elapsedTimeSec = elapsedTimeMillis/1000F;
-                System.out.println("Czas trwania algortymu: " + elapsedTimeSec + " sec");
+                        long elapsedTimeMillis = System.currentTimeMillis() - start;
+                        float elapsedTimeSec = elapsedTimeMillis / 1000F;
+                        BottomPanel.setDurationTime(elapsedTimeSec);
 
-                BufferedImage output = segmentation.getOutputImage();
-                Main.setSegmentedImage(output);
-                MainFrame.setImageLabel(output);
+                        BufferedImage output = segmentation.getOutputImage();
+                        Main.setSegmentedImage(output);
+                        MainFrame.setImageLabel(output);
+                        frame.setCursor(Cursor.getDefaultCursor());
+                        BottomPanel.setProgressBarVisible(false);
+                    }
+                }).start();
             }
-            frame.setCursor(Cursor.getDefaultCursor());
+
         });
 
         segmentationMenu.addSeparator();
@@ -205,7 +223,6 @@ public class MainMenuBar extends JMenuBar {
         exitItem.setFont(MainFrame.getBasicFont());
         add(programMenu);
 
-
         reload();
     }
 
@@ -225,5 +242,6 @@ public class MainMenuBar extends JMenuBar {
             segmentationMenu.setEnabled(false);
         }
     }
+
 }
 

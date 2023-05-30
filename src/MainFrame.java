@@ -1,3 +1,4 @@
+import GUIparts.BottomPanel;
 import ImageOperations.ImageRescaler;
 
 import javax.swing.*;
@@ -19,15 +20,20 @@ public class MainFrame extends JFrame {
         int y = (int)(SCREEN_HEIGHT - height) / 2;
 
         setBounds(x, y, width, height);
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
+        var mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
         var constr = new GridBagConstraints();
         constr.anchor = GridBagConstraints.CENTER;
         constr.gridx = 0;
         constr.gridy = 0;
-        add(imageLabel, constr);
+        mainPanel.add(imageLabel, constr);
+        add(mainPanel, BorderLayout.CENTER);
         imageLabel.setFont(HEADER_FONT);
         imageLabel.setText("Otwórz plik   CTRL + O");
         setJMenuBar(new MainMenuBar(this));
+
+        add(new BottomPanel(), BorderLayout.SOUTH);
     }
 
     public static void setImageLabel(BufferedImage image) {

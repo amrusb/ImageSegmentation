@@ -1,5 +1,6 @@
 package SegmentationAlgortithms;
 
+import GUIparts.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
 import RandGenerator.LCGenerator;
@@ -7,6 +8,7 @@ import Utils.Calculations;
 import Utils.Cluster;
 import Utils.Pixel;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -24,11 +26,9 @@ public class KMeansAlgorithm {
         WIDTH = image.getWidth();
         HEIGHT = image.getHeight();
         clusters = new ArrayList<Cluster>(clustersCount);
-        long start = System.currentTimeMillis();
+
         KMeansPP();
-        long elapsedTimeMillis = System.currentTimeMillis()-start;
-        float elapsedTimeSec = elapsedTimeMillis/1000F;
-        System.out.println("Czas trwania inicjalizacji: " + elapsedTimeSec + " sec");
+        hamerlySegmentation();
     }
 
     /*public void standardSegmentation(){
@@ -123,8 +123,19 @@ public class KMeansAlgorithm {
 
         int distanc_counter = 0;
         int iteration;
+
+        BottomPanel.setProgress(0);
+        BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);
+
         for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    BottomPanel.incrementProgress();
+                }
+            });
             for (int index = 0; index < size; index++) {
+
                 var pixel = pixelArray.get(index);
                 if(iteration != 0){
                     upperBounds[index] += moves[assignments[index]];
@@ -204,7 +215,7 @@ public class KMeansAlgorithm {
                 break;
 
         }
-
+        BottomPanel.setProgress(MAX_ITERATIONS * size - 1);
         System.out.println("Liczba obliczeń dystansu: " + distanc_counter);
         System.out.println("Liczba iteracji: " + iteration);
         System.out.println("Liczba iteracji * pixele: " + iteration * size);
@@ -233,9 +244,16 @@ public class KMeansAlgorithm {
         double[] distances = new double[pixelArraySize];
         Arrays.fill(distances, Double.MAX_VALUE);
 
+        BottomPanel.setProgressMaximum(clustersCount - 1);
         main_for:
         for (int i = 1; i < clustersCount; i++) {
-
+            int interation = i;
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    BottomPanel.setProgress(interation);
+                }
+            });
             double sum = 0.0;
 
             for (int j = 0; j < pixelArraySize; j++) {

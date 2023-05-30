@@ -14,6 +14,11 @@ public class Point {
         X = x;
         Y = y;
     }
+
+    public Point(double x, double y){
+        X = (int) x;
+        Y = (int) y;
+    }
     public Point(Point2D p){
         X = (int)p.getX();
         Y = (int)p.getY();
@@ -30,6 +35,13 @@ public class Point {
 
     public void setY(int y) {Y = y;}
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == this) return  true;
+        if(obj.getClass() != this.getClass()) return false;
+        var temp = (Point) obj;
+        return this.X == temp.X && this.Y == temp.getY();
+    }
 
     @Override
     public String toString() {
