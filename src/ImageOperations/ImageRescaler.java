@@ -14,7 +14,7 @@ public class ImageRescaler {
 
         BufferedImage after = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
-        AffineTransformOp scaleOp = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BICUBIC);
+        AffineTransformOp scaleOp = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
         scaleOp.filter(image, after);
         return after;

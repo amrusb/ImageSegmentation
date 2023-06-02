@@ -48,4 +48,17 @@ public class ImageReader {
         }
         return array;
     }
+
+    public static double[][] convert2GrayScale(BufferedImage image){
+        Pixel[][] pixels = get2DPixelArray(image);
+        double[][] output = new double[pixels.length][pixels[0].length];
+
+        for (int i = 0; i < pixels.length; i++) {
+            for (int j = 0; j < pixels[0].length; j++) {
+                output[i][j] = 0.299 * pixels[i][j].getR() + 0.587 * pixels[i][j].getG()  + 0.114 * pixels[i][j].getB();
+            }
+        }
+
+        return  output;
+    }
 }

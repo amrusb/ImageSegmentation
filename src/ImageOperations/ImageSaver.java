@@ -26,4 +26,15 @@ public class ImageSaver {
         }
         return outputImage;
     }
+
+    public static BufferedImage array2BufferedImage(double[][] array, int width, int height){
+        BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                int pixel = (255 << 24) | ((int)array[j][i] << 16) | ((int)array[j][i] << 8) | (int)array[j][i];
+                outputImage.setRGB(j, i, pixel);
+            }
+        }
+        return outputImage;
+    }
 }

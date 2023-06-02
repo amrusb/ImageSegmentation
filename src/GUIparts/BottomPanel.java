@@ -87,6 +87,7 @@ public class BottomPanel extends JPanel {
     public static void setProgressBarVisible(boolean flag){
         progressBar.setVisible(flag);
         progressLabel.setVisible(flag);
+        progressLabel.setText("");
     }
     public static void setProgressLabel(String label){
         progressLabel.setText(label);

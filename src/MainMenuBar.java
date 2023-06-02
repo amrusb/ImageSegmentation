@@ -5,7 +5,6 @@ import SegmentationAlgortithms.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -22,6 +21,7 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
     private static final JMenuItem RegionGrowingItem = new JMenuItem("Region-Growing");
+    private static final JMenuItem ThresholdingItem= new JMenuItem("Global Thresholding");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
     private static JFileChooser imageChooser = null;
     private static JFrame owner;
@@ -53,6 +53,9 @@ public class MainMenuBar extends JMenuBar {
         RegionGrowingItem.setFont(MainFrame.getBasicFont());
 
         RegionGrowingItem.addActionListener(new RegionGrowingAction());
+
+        segmentationMenu.add(ThresholdingItem);
+        ThresholdingItem.addActionListener(new ThresholdingAction());
 
         segmentationMenu.addSeparator();
 
@@ -271,6 +274,33 @@ public class MainMenuBar extends JMenuBar {
                     BottomPanel.setDurationInfoVisible(true);
                 }).start();
             }
+        }
+    }
+    private static class ThresholdingAction implements  ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            BottomPanel.setDurationInfoVisible(false);
+            if(Main.hasSegmentedImage()){
+                Main.setImage(Main.getSegmentedImage());
+            }
+            new Thread(() -> {
+                BottomPanel.setProgressBarVisible(true);
+                owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                long start = System.currentTimeMillis();
+                var segmentation = new GlobalThresholdingAlgorithm(Main.getImage());
+                undo.setEnabled(true);
+
+                long elapsedTimeMillis = System.currentTimeMillis() - start;
+                float elapsedTimeSec = elapsedTimeMillis / 1000F;
+                BottomPanel.setDurationTime(elapsedTimeSec);
+
+                BufferedImage output = segmentation.getOutputImage();
+                Main.setSegmentedImage(output);
+                MainFrame.setImageLabel(output);
+                owner.setCursor(Cursor.getDefaultCursor());
+                BottomPanel.setProgressBarVisible(false);
+                BottomPanel.setDurationInfoVisible(true);
+            }).start ();
         }
     }
     private static class ImageFilter extends FileFilter {

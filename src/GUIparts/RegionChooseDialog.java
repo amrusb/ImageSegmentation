@@ -25,7 +25,7 @@ public class RegionChooseDialog extends JDialog {
         setLocationRelativeTo(owner);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         DIALOG_WIDTH = image.getWidth();
-        DIALOG_HEIGHT = image.getHeight() + 100;
+        DIALOG_HEIGHT = image.getHeight() + 70;
         double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
         int x = (int)(SCREEN_WIDTH - DIALOG_WIDTH) / 2;
@@ -61,7 +61,6 @@ public class RegionChooseDialog extends JDialog {
         private Ellipse2D current_circle = null;
 
         public ImagePanel(BufferedImage image) {
-            //setSize(image.getWidth(), image.getHeight());
             setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
             this.image = image;
             addMouseListener(new MouseHandler());

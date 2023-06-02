@@ -13,23 +13,22 @@ public class MainFrame extends JFrame {
     private static final JLabel imageLabel = new JLabel();
     public MainFrame(){
         setTitle("Segmentacja obrazu");
-        int width = (int)(SCREEN_WIDTH * 3 / 4);
-        int height = (int)(SCREEN_HEIGHT * 3 / 4);
+        int width = (int)(SCREEN_WIDTH * 4 / 5);
+        int height = (int)(SCREEN_HEIGHT * 4 / 5);
         int x = (int)(SCREEN_WIDTH - width) / 2;
         int y = (int)(SCREEN_HEIGHT - height) / 2;
 
         setBounds(x, y, width, height);
         setLayout(new BorderLayout());
-        var mainPanel = new JPanel();
-        mainPanel.setLayout(new GridBagLayout());
-        var constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        mainPanel.add(imageLabel, constraints);
-        add(mainPanel, BorderLayout.CENTER);
+
+        var scrollPane = new JScrollPane(imageLabel);
         imageLabel.setFont(HEADER_FONT);
         imageLabel.setText("Otwórz plik   CTRL + O");
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        getContentPane().add(scrollPane);
+
         setJMenuBar(new MainMenuBar(this));
 
         add(new BottomPanel(), BorderLayout.SOUTH);
@@ -57,12 +56,11 @@ public class MainFrame extends JFrame {
     }
 
     public static int getFrameWidth(){
-        return (int)(SCREEN_WIDTH * 3 / 4);
+        return (int)(SCREEN_WIDTH * 4 / 5);
     }
     public static int getFrameHeight(){
-        return (int)(SCREEN_HEIGHT * 3 / 4);
+        return (int)(SCREEN_HEIGHT * 4 / 5);
     }
-
     public static Font getBasicFont() {return BASIC_FONT;}
 
 }

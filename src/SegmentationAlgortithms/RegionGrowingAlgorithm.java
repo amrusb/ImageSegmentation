@@ -29,7 +29,7 @@ public class RegionGrowingAlgorithm {
         for (boolean[] row:visited) {
             Arrays.fill(row, false);
         }
-        //double d = OtsuMethod(pixelArray);
+
         //Region-growing
         //standardRegionGrowing(seeds);
         //graySpaceRegionGrowing(seeds);
@@ -57,6 +57,8 @@ public class RegionGrowingAlgorithm {
             int R = pixel_seed.getR();
             int G = pixel_seed.getG();
             int B = pixel_seed.getB();
+
+
             BottomPanel.setProgressMaximum(100);
 
             current_threshold = 60;
@@ -66,27 +68,45 @@ public class RegionGrowingAlgorithm {
                 var current = points.poll();
                 int x = current.getX();
                 int y = current.getY();
+                var current_pixel = pixelArray[x][y];
                 if(visited[x][y]) continue;
                 visited[x][y] =  true;
 
-                var current_pixel = pixelArray[x][y];
-                double distance = Calculations.calculateDistance(pixel_seed, current_pixel);
-                if(distance <= current_threshold){
-                    R+= current_pixel.getR();
-                    G+= current_pixel.getG();
-                    B+= current_pixel.getB();
-                    pixelList.add(current_pixel);
+                R+= current_pixel.getR();
+                G+= current_pixel.getG();
+                B+= current_pixel.getB();
 
-                    if(checkIfValid(x, y+1)) points.add(new Point(x, y+1));
-                    if(checkIfValid(x, y-1)) points.add(new Point(x, y-1));
-                    if(checkIfValid(x-1, y)) points.add(new Point(x-1, y));
-                    if(checkIfValid(x+1, y)) points.add(new Point(x+1, y));
+                pixelList.add(current_pixel);
+
+
+                if(checkIfValid(x, y+1)){
+                    var neighbour_pixel = pixelArray[x][y+1];
+                    if(checkIfSimilar(neighbour_pixel, current_pixel))
+                        points.add(new Point(x, y+1));
+                }
+                if(checkIfValid(x, y-1)){
+                    var neighbour_pixel = pixelArray[x][y-1];
+                    if(checkIfSimilar(neighbour_pixel, current_pixel)){
+                        points.add(new Point(x, y-1));
+                    }
+
+                }
+                if(checkIfValid(x-1, y)){
+                    var neighbour_pixel = pixelArray[x-1][y];
+                    if(checkIfSimilar(neighbour_pixel, current_pixel))
+                        points.add(new Point(x-1, y));
+                }
+                if(checkIfValid(x+1, y)){
+                    var neighbour_pixel = pixelArray[x+1][y];
+                    if(checkIfSimilar(neighbour_pixel, current_pixel))
+                        points.add(new Point(x+1, y));
                 }
             }
 
             R/=pixelList.size();
             G/=pixelList.size();
             B/=pixelList.size();
+            System.out.println(pixelList.size());
             for (Pixel p: pixelList) {
                 p.setPixelValue(R, G, B);
             }
@@ -221,6 +241,10 @@ public class RegionGrowingAlgorithm {
     private boolean checkIfValid(int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
     }
+    private boolean checkIfSimilar(Pixel p1, Pixel p2){
+        double distance = Calculations.calculateDistanceSquared(p1, p2);
+        return distance <= 30;
+    }
     private double getMeanGrayScale(Pixel[][] pixelArray){
         double mean = 0;
         int size = 0;
@@ -248,19 +272,6 @@ public class RegionGrowingAlgorithm {
             }
         }
         return  sigma/size;
-    }
-    private double OtsuMethod(Pixel[][] pixelArray){
-        int[] histogram = new int[256];
-        double threshold = 0;
-        for (Pixel[] pixelRow: pixelArray) {
-            for (Pixel pixel: pixelRow) {
-                double graySpaceValue = 0.299 * pixel.getR() + 0.587 * pixel.getG()  + 0.114 * pixel.getB();
-                graySpaceValue = Math.floor(graySpaceValue);
-                histogram[(int)graySpaceValue]++;
-            }
-        }
-        HistogramChart.createHistogram(histogram);
-        return threshold;
     }
     public BufferedImage getOutputImage(){
         BufferedImage image = ImageSaver.array2BufferedImage(pixelArray, WIDTH, HEIGHT);

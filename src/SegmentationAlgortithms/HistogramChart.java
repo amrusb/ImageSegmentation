@@ -41,4 +41,33 @@ public class HistogramChart {
             System.err.println("Wystąpił błąd podczas zapisu diagramu: " + e.getMessage());
         }
     }
+    public static void createHistogram(double[] histogram) {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        for (int i = 0; i < histogram.length; i++) {
+            dataset.addValue(histogram[i], "Frequency", String.valueOf(i));
+        }
+
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Histogram",
+                "Value",
+                "Frequency",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
+        );
+
+        int width = 800; // szerokość obrazu diagramu
+        int height = 600; // wysokość obrazu diagramu
+        File chartFile = new File("histogram.png");
+
+        try {
+            saveChartAsPNG(chartFile, chart, width, height);
+            System.out.println("Diagram został zapisany jako histogram.png");
+        } catch (IOException e) {
+            System.err.println("Wystąpił błąd podczas zapisu diagramu: " + e.getMessage());
+        }
+    }
 }
