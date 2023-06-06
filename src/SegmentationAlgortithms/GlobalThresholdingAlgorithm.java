@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 
 public class GlobalThresholdingAlgorithm {
     private double[][] grayScalePixelArray;
-    private int WIDTH;
-    private int HEIGHT;
+    private final int WIDTH;
+    private final int HEIGHT;
     private static final int L = 256;
 
     public GlobalThresholdingAlgorithm(BufferedImage image){
@@ -41,18 +41,23 @@ public class GlobalThresholdingAlgorithm {
         double[] histogram = new double[L];
         int N = WIDTH*HEIGHT;
 
+        BottomPanel.setProgress(1);
+        BottomPanel.setProgressMaximum(N*L);
+        BottomPanel.setProgressLabel("Tworzenie histogramu...");
+
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
+                BottomPanel.incrementProgress();
                 int value = (int)Math.ceil(grayScalePixelArray[i][j]);
                 histogram[value]++;
             }
         }
 
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < L; i++) {
+            BottomPanel.incrementProgress();
             histogram[i] = histogram[i] / N;
         }
 
-        HistogramChart.createHistogram(histogram);
         return  histogram;
     }
 
@@ -84,16 +89,12 @@ public class GlobalThresholdingAlgorithm {
             else variances[i] = 0.0;
         }
 
-        //znalezienie max variancji
         int threshold = 0;
         for (int i = 1; i < L; i++) {
             BottomPanel.incrementProgress();
             if(variances[i] > variances[threshold]) threshold = i;
         }
 
-        System.out.println("LEFT: " + (omega[threshold] * (my[threshold] / omega[threshold])+ (1-omega[threshold]) * ((my[L - 1] - my[threshold]) / (1 - omega[threshold]))));
-        System.out.println("RIGHT: " + my[L - 1]);
-        System.out.println(threshold);
         return threshold;
     }
     public BufferedImage getOutputImage() {

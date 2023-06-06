@@ -21,9 +21,10 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
     private static final JMenuItem RegionGrowingItem = new JMenuItem("Region-Growing");
-    private static final JMenuItem ThresholdingItem= new JMenuItem("Global Thresholding");
+    private static final JMenu ThresholdingItem= new JMenu("Thresholding");
+    private static final JMenuItem GlobalThresholdingItem = new JMenuItem("Global Thresholding");
+    private static final JMenuItem LocalThresholdingItem = new JMenuItem("Local Thresholding");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
-    private static JFileChooser imageChooser = null;
     private static JFrame owner;
     private static final String DEFAULT_EXTENSION = "JPG";
     public MainMenuBar(JFrame frame){
@@ -55,7 +56,13 @@ public class MainMenuBar extends JMenuBar {
         RegionGrowingItem.addActionListener(new RegionGrowingAction());
 
         segmentationMenu.add(ThresholdingItem);
-        ThresholdingItem.addActionListener(new ThresholdingAction());
+        ThresholdingItem.add(GlobalThresholdingItem);
+        GlobalThresholdingItem.setFont(MainFrame.getBasicFont());
+        GlobalThresholdingItem.addActionListener(new GlobalThresholdingAction());
+        ThresholdingItem.add(LocalThresholdingItem);
+        LocalThresholdingItem.addActionListener(new LocalThresholdingAction());
+        LocalThresholdingItem.setFont(MainFrame.getBasicFont());
+        ThresholdingItem.setFont(MainFrame.getBasicFont());
 
         segmentationMenu.addSeparator();
 
@@ -101,7 +108,7 @@ public class MainMenuBar extends JMenuBar {
     private static class OpenAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            imageChooser = new JFileChooser();
+            JFileChooser imageChooser = new JFileChooser();
             imageChooser.setCurrentDirectory(new File("./images"));
             imageChooser.addChoosableFileFilter(new ImageFilter());
             imageChooser.setAcceptAllFileFilterUsed(false);
@@ -118,6 +125,7 @@ public class MainMenuBar extends JMenuBar {
 
                 String fileName = imageChooser.getSelectedFile().getName();
                 BottomPanel.setFileName(fileName);
+                ImageReader.setFileName(fileName);
 
                 String filePath = imageChooser.getSelectedFile().getAbsolutePath();
                 ImageReader.setFilePath(filePath);
@@ -135,7 +143,7 @@ public class MainMenuBar extends JMenuBar {
             owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             String filePath = ImageReader.getFilePath();
             File output = new File(filePath);
-            String fileName = imageChooser.getSelectedFile().getName();
+            String fileName = ImageReader.getFileName();
             String formatName = fileName.substring(fileName.indexOf('.'));
             formatName = fileName.substring(fileName.indexOf('.') + 1 );
             try{
@@ -154,7 +162,7 @@ public class MainMenuBar extends JMenuBar {
     private static class SaveAsAction implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            imageChooser = new JFileChooser();
+            JFileChooser imageChooser = new JFileChooser();
             imageChooser.setCurrentDirectory(new File("./images"));
             imageChooser.addChoosableFileFilter(new ImageFilter());
             imageChooser.setAcceptAllFileFilterUsed(false);
@@ -276,7 +284,7 @@ public class MainMenuBar extends JMenuBar {
             }
         }
     }
-    private static class ThresholdingAction implements  ActionListener{
+    private static class GlobalThresholdingAction implements  ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             BottomPanel.setDurationInfoVisible(false);
@@ -284,11 +292,38 @@ public class MainMenuBar extends JMenuBar {
                 Main.setImage(Main.getSegmentedImage());
             }
             new Thread(() -> {
-                BottomPanel.setProgressBarVisible(true);
                 owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                BottomPanel.setProgressBarVisible(true);
                 long start = System.currentTimeMillis();
                 var segmentation = new GlobalThresholdingAlgorithm(Main.getImage());
                 undo.setEnabled(true);
+
+                long elapsedTimeMillis = System.currentTimeMillis() - start;
+                float elapsedTimeSec = elapsedTimeMillis / 1000F;
+                BottomPanel.setDurationTime(elapsedTimeSec);
+
+                BufferedImage output = segmentation.getOutputImage();
+                Main.setSegmentedImage(output);
+                MainFrame.setImageLabel(output);
+                owner.setCursor(Cursor.getDefaultCursor());
+                BottomPanel.setProgressBarVisible(false);
+                BottomPanel.setDurationInfoVisible(true);
+            }).start ();
+        }
+    }
+    private static class LocalThresholdingAction implements  ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            BottomPanel.setDurationInfoVisible(false);
+            if(Main.hasSegmentedImage()){
+                Main.setImage(Main.getSegmentedImage());
+            }
+            new Thread(() -> {
+                owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                BottomPanel.setProgressBarVisible(true);
+                long start = System.currentTimeMillis();
+                undo.setEnabled(true);
+                var segmentation = new AdaptiveThresholdingAlgorithm(Main.getImage());
 
                 long elapsedTimeMillis = System.currentTimeMillis() - start;
                 float elapsedTimeSec = elapsedTimeMillis / 1000F;

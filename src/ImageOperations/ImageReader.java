@@ -1,5 +1,6 @@
 package ImageOperations;
 
+import GUIparts.BottomPanel;
 import Utils.Pixel;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,10 @@ import java.util.ArrayList;
 
 public class ImageReader {
     private static String filePath;
+    private static String fileName;
+
+    public static void setFileName(String fileName) { ImageReader.fileName = fileName;}
+
     public static void setFilePath(String filePath) {
         ImageReader.filePath = filePath;
     }
@@ -52,7 +57,9 @@ public class ImageReader {
     public static double[][] convert2GrayScale(BufferedImage image){
         Pixel[][] pixels = get2DPixelArray(image);
         double[][] output = new double[pixels.length][pixels[0].length];
-
+        BottomPanel.setProgress(1);
+        BottomPanel.setProgressMaximum(pixels.length*pixels[0].length);
+        BottomPanel.setProgressLabel("Konwersja na skalę szarości...");
         for (int i = 0; i < pixels.length; i++) {
             for (int j = 0; j < pixels[0].length; j++) {
                 output[i][j] = 0.299 * pixels[i][j].getR() + 0.587 * pixels[i][j].getG()  + 0.114 * pixels[i][j].getB();
@@ -60,5 +67,9 @@ public class ImageReader {
         }
 
         return  output;
+    }
+
+    public static String getFileName() {
+        return fileName;
     }
 }
