@@ -54,7 +54,7 @@ public class ImageReader {
         return array;
     }
 
-    public static double[][] convert2GrayScale(BufferedImage image){
+    public static double[][] convertToGrayScale(BufferedImage image){
         Pixel[][] pixels = get2DPixelArray(image);
         double[][] output = new double[pixels.length][pixels[0].length];
         BottomPanel.setProgress(1);

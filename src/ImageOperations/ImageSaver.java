@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class ImageSaver {
-    public static BufferedImage array2BufferedImage(ArrayList<Pixel> array, int width, int height){
+    public static BufferedImage convertToBufferedImage(ArrayList<Pixel> array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         int pixel_it = 0;
         for (int i = 0; i < height; i++) {
@@ -17,7 +17,7 @@ public class ImageSaver {
         return outputImage;
     }
 
-    public static BufferedImage array2BufferedImage(Pixel[][] array, int width, int height){
+    public static BufferedImage convertToBufferedImage(Pixel[][] array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -27,7 +27,7 @@ public class ImageSaver {
         return outputImage;
     }
 
-    public static BufferedImage array2BufferedImage(double[][] array, int width, int height){
+    public static BufferedImage convertToBufferedImage(double[][] array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {

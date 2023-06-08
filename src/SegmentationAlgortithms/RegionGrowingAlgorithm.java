@@ -14,11 +14,13 @@ import java.util.*;
 public class RegionGrowingAlgorithm {
     private static final int colour_threshold = 55;
     private static double current_threshold;
-    private Pixel[][] pixelArray;
-    private boolean[][] visited;
+    private final Pixel[][] pixelArray;
+    private final boolean[][] visited;
     private Queue<Point> points = new LinkedList<Point>();
-    private int WIDTH;
-    private int HEIGHT;
+    private final int WIDTH;
+    private final int HEIGHT;
+    private final int alpha = 4;
+    private final double threshold = 0.2/alpha;
     public RegionGrowingAlgorithm(BufferedImage image, ArrayList<Point> seeds){
         pixelArray = ImageReader.get2DPixelArray(image);
 
@@ -33,7 +35,8 @@ public class RegionGrowingAlgorithm {
         //Region-growing
         //standardRegionGrowing(seeds);
         //graySpaceRegionGrowing(seeds);
-        comboRegionGrowing(seeds);
+        //comboRegionGrowing(seeds);
+        HSLbasedRegionGrowing(seeds);
     }
 
     private void standardRegionGrowing( ArrayList<Point> seeds){
@@ -61,7 +64,7 @@ public class RegionGrowingAlgorithm {
 
             BottomPanel.setProgressMaximum(100);
 
-            current_threshold = 60;
+            current_threshold = 10;
 
             while(!points.isEmpty()){
 
@@ -173,18 +176,12 @@ public class RegionGrowingAlgorithm {
         }
         BottomPanel.setProgress(seeds.size());
     }
-
     private void comboRegionGrowing(ArrayList<Point> seeds){
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(seeds.size());
         BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    BottomPanel.incrementProgress();
-                }
-            });
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
 
             var pixel_seed = pixelArray[seed.getX()][seed.getY()];
 
@@ -238,12 +235,88 @@ public class RegionGrowingAlgorithm {
         }
         BottomPanel.setProgress(seeds.size());
     }
+    private void HSLbasedRegionGrowing(ArrayList<Point> seeds){
+        BottomPanel.setProgress(1);
+        BottomPanel.setProgressMaximum(seeds.size());
+        BottomPanel.setProgressLabel("Region Growing...");
+        for (Point seed: seeds) {
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+
+            var pixel_seed = pixelArray[seed.getX()][seed.getY()];
+
+            ArrayList<Pixel> pixelList = new ArrayList<>();
+            pixelList.add(pixel_seed);
+            points.add(seed);
+
+            int R = pixel_seed.getR();
+            int G = pixel_seed.getG();
+            int B = pixel_seed.getB();
+
+
+            double I_seed = 0.299 * R + 0.587 * G  + 0.114 * B;
+            I_seed/=256;
+            double S_seed = 1 - (1/I_seed) * Math.min(Math.min(R, G), B);
+            S_seed/=256;
+            double H_seed  = (R - G/2 - B/2)/ Math.sqrt(R*R+G*G+B*B-R*G-R*B-G*B);
+            H_seed  = Math.acos(H_seed );
+
+            if(B>G) H_seed = 360 - H_seed;
+            H_seed /= 360;
+            H_seed/=256;
+            while(!points.isEmpty()){
+                var current = points.poll();
+                int x = current.getX();
+                int y = current.getY();
+                if(visited[x][y]) continue;
+                visited[x][y] =  true;
+
+                var current_pixel = pixelArray[x][y];
+                int cR = current_pixel.getR();
+                int cG = current_pixel.getG();
+                int cB = current_pixel.getB();
+
+
+                double I =  0.299 * cR + 0.587 * cG  + 0.114 * cB;
+                I/=256;
+                double S = 1 - (1/I) * Math.min(Math.min(cR, cG), cB);
+                S/=256;
+                double H = (cR - cG/2 - cB/2)/ Math.sqrt(cR*cR+cG*cG+cB*cB-cR*cG-cR*cB-cG*cB);
+                H = Math.acos(H);
+
+                if(cB > cG) H = 360 - H;
+                H/=360;
+                H/=256;
+
+                double distance = (H-H_seed)*(H-H_seed) + Math.pow(S-S_seed, alpha) + (I-I_seed)*(I-I_seed);
+
+                if(distance <= threshold){
+                    R+= current_pixel.getR();
+                    G+= current_pixel.getG();
+                    B+= current_pixel.getB();
+                    pixelList.add(current_pixel);
+
+                    if(checkIfValid(x, y+1)) points.add(new Point(x, y+1));
+                    if(checkIfValid(x, y-1)) points.add(new Point(x, y-1));
+                    if(checkIfValid(x-1, y)) points.add(new Point(x-1, y));
+                    if(checkIfValid(x+1, y)) points.add(new Point(x+1, y));
+                }
+            }
+
+            R/=pixelList.size();
+            G/=pixelList.size();
+            B/=pixelList.size();
+            for (Pixel p: pixelList) {
+                p.setPixelValue(R, G, B);
+            }
+        }
+        BottomPanel.setProgress(seeds.size());
+    }
     private boolean checkIfValid(int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
     }
     private boolean checkIfSimilar(Pixel p1, Pixel p2){
         double distance = Calculations.calculateDistanceSquared(p1, p2);
-        return distance <= 30;
+        return distance <= 10;
     }
     private double getMeanGrayScale(Pixel[][] pixelArray){
         double mean = 0;
@@ -274,7 +347,7 @@ public class RegionGrowingAlgorithm {
         return  sigma/size;
     }
     public BufferedImage getOutputImage(){
-        BufferedImage image = ImageSaver.array2BufferedImage(pixelArray, WIDTH, HEIGHT);
+        BufferedImage image = ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
         return image;
     }
 

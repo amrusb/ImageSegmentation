@@ -4,6 +4,7 @@ import GUIparts.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class GlobalThresholdingAlgorithm {
@@ -16,7 +17,7 @@ public class GlobalThresholdingAlgorithm {
         WIDTH = image.getWidth();
         HEIGHT = image.getHeight();
 
-        grayScalePixelArray = ImageReader.convert2GrayScale(image);
+        grayScalePixelArray = ImageReader.convertToGrayScale(image);
         int threshold = OtsuMethod();
         thresholding(threshold);
 
@@ -28,7 +29,7 @@ public class GlobalThresholdingAlgorithm {
         BottomPanel.setProgressLabel("Thresholding...");
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                BottomPanel.incrementProgress();
+                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
                 if(grayScalePixelArray[i][j] <= threshold){
                     grayScalePixelArray[i][j] = 0;
                 }
@@ -47,14 +48,14 @@ public class GlobalThresholdingAlgorithm {
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                BottomPanel.incrementProgress();
+                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
                 int value = (int)Math.ceil(grayScalePixelArray[i][j]);
                 histogram[value]++;
             }
         }
 
         for (int i = 0; i < L; i++) {
-            BottomPanel.incrementProgress();
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             histogram[i] = histogram[i] / N;
         }
 
@@ -70,9 +71,10 @@ public class GlobalThresholdingAlgorithm {
         omega[0] = p[0];
         my[0] = 0;
         BottomPanel.setProgress(1);
-        BottomPanel.setProgressMaximum(L*L);
+        BottomPanel.setProgressMaximum(L*L*L);
         BottomPanel.setProgressLabel("Szukanie progu...");
         for (int i = 1; i < L; i++) {
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             omega[i] = omega[i-1] + p[i];
             my[i] = my[i-1] + (i * p[i]);
         }
@@ -81,7 +83,7 @@ public class GlobalThresholdingAlgorithm {
 
         double[] variances= new double[L];
         for (int i = 0; i < L; i++){
-            BottomPanel.incrementProgress();
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             double numerator = mean_lvl*omega[i] - my[i];
             double denominator = omega[i]*(1-omega[i]);
             if(denominator != 0.0)
@@ -91,14 +93,14 @@ public class GlobalThresholdingAlgorithm {
 
         int threshold = 0;
         for (int i = 1; i < L; i++) {
-            BottomPanel.incrementProgress();
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             if(variances[i] > variances[threshold]) threshold = i;
         }
 
         return threshold;
     }
     public BufferedImage getOutputImage() {
-        BufferedImage image = ImageSaver.array2BufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
+        BufferedImage image = ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
         return image;
     }
 

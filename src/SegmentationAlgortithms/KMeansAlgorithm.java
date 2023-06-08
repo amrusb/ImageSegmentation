@@ -51,12 +51,7 @@ public class KMeansAlgorithm {
         BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);
         BottomPanel.setProgressLabel("K-means...");
         for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    BottomPanel.incrementProgress();
-                }
-            });
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             for (int index = 0; index < size; index++) {
 
                 var pixel = pixelArray.get(index);
@@ -72,7 +67,6 @@ public class KMeansAlgorithm {
                     distanc_counter++;
                     for (int i = 0; i < clustersCount; i++) {
                         double distance = Math.sqrt(Calculations.calculateDistanceSquared(clusters.get(i), pixel));
-                        //sprawdzić
                         if (distance < minDistance) {
                             secondMinDistance = minDistance;
                             minDistance = distance;
@@ -139,9 +133,6 @@ public class KMeansAlgorithm {
 
         }
         BottomPanel.setProgress(MAX_ITERATIONS * size - 1);
-        System.out.println("Liczba obliczeń dystansu: " + distanc_counter);
-        System.out.println("Liczba iteracji: " + iteration);
-        System.out.println("Liczba iteracji * pixele: " + iteration * size);
 
         // Aktualizacja wartości pikseli
         int index = 0;
@@ -207,7 +198,7 @@ public class KMeansAlgorithm {
     }
 
     public BufferedImage getOutputImage(){
-        BufferedImage image = ImageSaver.array2BufferedImage(pixelArray, WIDTH, HEIGHT);
+        BufferedImage image = ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
         return image;
     }
 }

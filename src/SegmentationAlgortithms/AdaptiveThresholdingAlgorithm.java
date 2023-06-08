@@ -4,6 +4,7 @@ import GUIparts.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class AdaptiveThresholdingAlgorithm {
@@ -17,7 +18,7 @@ public class AdaptiveThresholdingAlgorithm {
         WIDTH = image.getWidth();
         HEIGHT = image.getHeight();
         s = WIDTH / 8;
-        grayScalePixelArray = ImageReader.convert2GrayScale(image);
+        grayScalePixelArray = ImageReader.convertToGrayScale(image);
 
         thresholding();
     }
@@ -32,7 +33,7 @@ public class AdaptiveThresholdingAlgorithm {
 
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                BottomPanel.incrementProgress();
+                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
                 int x1 = Math.max(0, x - windowSize / 2);
                 int y1 = Math.max(0, y - windowSize / 2);
                 int x2 = Math.min(WIDTH - 1, x + windowSize / 2);
@@ -40,9 +41,9 @@ public class AdaptiveThresholdingAlgorithm {
 
                 int count = (x2 - x1 + 1) * (y2 - y1 + 1);
                 int sum = integralImage[x2][y2] - integralImage[x2][y1] - integralImage[x1][y2] + integralImage[x1][y1];
-                double mean = sum / (double)count / 30;
+                double mean = sum / (double)count / 10;
 
-                if ((grayScalePixelArray[x][y] * count) <= (sum * (100 - mean)  / 100.0)) {
+                if ((grayScalePixelArray[x][y] * count) <= (sum * (100 - t)  / 100.0)) {
                     grayScalePixelArray[x][y] = 0;
                 } else {
                     grayScalePixelArray[x][y] = 255;
@@ -54,24 +55,24 @@ public class AdaptiveThresholdingAlgorithm {
     private int[][] createIntegralImage() {
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(WIDTH*HEIGHT);
-        BottomPanel.setProgressLabel("Tworzenie integral image...");
+        BottomPanel.setProgressLabel("Tworzenie obrazu całkowego...");
 
         int[][] integralImage = new int[WIDTH][HEIGHT];
         integralImage[0][0] = (int)grayScalePixelArray[0][0];
 
         for (int x = 1; x < WIDTH; x++) {
-            BottomPanel.incrementProgress();
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             integralImage[x][0] = integralImage[x - 1][0] + (int)grayScalePixelArray[x][0];
         }
 
         for (int y = 1; y < HEIGHT; y++) {
-            BottomPanel.incrementProgress();
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             integralImage[0][y] = integralImage[0][y - 1] + (int)grayScalePixelArray[0][y];
         }
 
         for (int x = 1; x < WIDTH; x++) {
             for (int y = 1; y < HEIGHT; y++) {
-                BottomPanel.incrementProgress();
+                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
                 integralImage[x][y] = integralImage[x - 1][y] + integralImage[x][y - 1]
                         - integralImage[x - 1][y - 1] + (int)grayScalePixelArray[x][y];
             }
@@ -80,7 +81,7 @@ public class AdaptiveThresholdingAlgorithm {
     }
 
     public BufferedImage getOutputImage() {
-        BufferedImage image = ImageSaver.array2BufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
+        BufferedImage image = ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
         return image;
     }
 }
