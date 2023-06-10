@@ -5,6 +5,13 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class ImageRescaler {
+    /**
+     * Skaluje obraz zgodnie z podanym współczynnikiem skali.
+     *
+     * @param image obiekt BufferedImage reprezentujący obraz do skalowania
+     * @param scale współczynnik skali
+     * @return skalowany obraz jako obiekt BufferedImage
+     */
     public static BufferedImage rescaleImage(BufferedImage image, double scale){
         int width = image.getWidth();
         int height = image.getHeight();
@@ -12,11 +19,11 @@ public class ImageRescaler {
         width = (int) (scale * width);
         height = (int) (scale * height);
 
-        BufferedImage after = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         AffineTransform scaleInstance = AffineTransform.getScaleInstance(scale, scale);
-        AffineTransformOp scaleOp = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        AffineTransformOp transformOp = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 
-        scaleOp.filter(image, after);
-        return after;
+        transformOp.filter(image, outputImage);
+        return outputImage;
     }
 }

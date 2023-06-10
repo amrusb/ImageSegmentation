@@ -1,15 +1,14 @@
 package SegmentationAlgortithms;
 
-import GUIparts.BottomPanel;
+import UserInterface.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
-import RandGenerator.LCGenerator;
+import RandomGenerator.LCGenerator;
 import Utils.Calculations;
 import Utils.Cluster;
 import Utils.Pixel;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicBorders;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -29,10 +28,10 @@ public class KMeansAlgorithm {
         clusters = new ArrayList<Cluster>(clustersCount);
 
         KMeansPP();
-        hamerlySegmentation();
+        HamerlySegmentation();
     }
 
-    public void hamerlySegmentation() {
+    private void HamerlySegmentation() {
         var size = pixelArray.size();
 
         double[] upperBounds = new double[size];
@@ -180,7 +179,7 @@ public class KMeansAlgorithm {
                 sum+= distances[j];
             }
 
-            double d = (int)(random.nextDouble() * sum);
+            double d = (random.nextDouble() * sum);
             double pxl_value_sum = 0.0;
             int cluster_index = -1;
 

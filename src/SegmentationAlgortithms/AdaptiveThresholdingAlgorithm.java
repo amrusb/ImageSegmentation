@@ -1,6 +1,6 @@
 package SegmentationAlgortithms;
 
-import GUIparts.BottomPanel;
+import UserInterface.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
 
@@ -25,7 +25,6 @@ public class AdaptiveThresholdingAlgorithm {
 
     private void thresholding() {
         int[][] integralImage = createIntegralImage();
-        int windowSize = Math.min(s, Math.min(WIDTH, HEIGHT));
 
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(WIDTH*HEIGHT);
@@ -34,14 +33,13 @@ public class AdaptiveThresholdingAlgorithm {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 SwingUtilities.invokeLater(BottomPanel::incrementProgress);
-                int x1 = Math.max(0, x - windowSize / 2);
-                int y1 = Math.max(0, y - windowSize / 2);
-                int x2 = Math.min(WIDTH - 1, x + windowSize / 2);
-                int y2 = Math.min(HEIGHT - 1, y + windowSize / 2);
+                int x1 = Math.max(0, x - s / 2);
+                int y1 = Math.max(0, y - s / 2);
+                int x2 = Math.min(WIDTH - 1, x + s / 2);
+                int y2 = Math.min(HEIGHT - 1, y + s / 2);
 
                 int count = (x2 - x1 + 1) * (y2 - y1 + 1);
                 int sum = integralImage[x2][y2] - integralImage[x2][y1] - integralImage[x1][y2] + integralImage[x1][y1];
-                double mean = sum / (double)count / 10;
 
                 if ((grayScalePixelArray[x][y] * count) <= (sum * (100 - t)  / 100.0)) {
                     grayScalePixelArray[x][y] = 0;
@@ -51,7 +49,10 @@ public class AdaptiveThresholdingAlgorithm {
             }
         }
     }
-
+    /**
+     * Tworzy obraz całkowy wykorzystywany w algorytmie adaptacyjnego progowania.
+     * @return tablica dwuwymiarowa przechowująca obraz całkowy
+     */
     private int[][] createIntegralImage() {
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(WIDTH*HEIGHT);
@@ -79,7 +80,10 @@ public class AdaptiveThresholdingAlgorithm {
         }
         return integralImage;
     }
-
+    /**
+     * Zwraca obraz wyjściowy po zastosowaniu adaptacyjnego progowania.
+     * @return obraz wyjściowy po segmentacji
+     */
     public BufferedImage getOutputImage() {
         BufferedImage image = ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
         return image;

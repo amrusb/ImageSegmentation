@@ -1,6 +1,6 @@
 package ImageOperations;
 
-import GUIparts.BottomPanel;
+import UserInterface.BottomPanel;
 import Utils.Pixel;
 
 import javax.imageio.ImageIO;
@@ -12,12 +12,24 @@ import java.util.ArrayList;
 public class ImageReader {
     private static String filePath;
     private static String fileName;
+    /**
+     * Ustawia nazwę pliku, z którego zostanie odczytany obraz.
+     * @param fileName nazwa pliku
+     */
 
     public static void setFileName(String fileName) { ImageReader.fileName = fileName;}
+    /**
+     * Ustawia ścieżkę do pliku, z którego zostanie odczytany obraz.
+     * @param filePath ścieżka do pliku
+     */
 
     public static void setFilePath(String filePath) {
         ImageReader.filePath = filePath;
     }
+    /**
+     * Odczytuje obraz z pliku i zwraca go jako obiekt BufferedImage.
+     * @return obiekt BufferedImage reprezentujący odczytany obraz
+     */
     public static BufferedImage readImage(){
         File file;
         BufferedImage image = null;
@@ -29,8 +41,16 @@ public class ImageReader {
         }
         return image;
     }
+    /**
+     * Zwraca ścieżkę do odczytanego pliku obrazu.
+     * @return ścieżka do pliku obrazu
+     */
     public static String getFilePath(){ return filePath; }
-
+    /**
+     * Konwertuje obraz w postaci BufferedImage na ArrayListę obiektów Pixel.
+     * @param image obiekt BufferedImage reprezentujący obraz
+     * @return ArrayLista obiektów Pixel reprezentujących piksele obrazu
+     */
     public static ArrayList<Pixel> getPixelArray(BufferedImage image){
         int image_width = image.getWidth();
         int image_height = image.getHeight();
@@ -42,6 +62,11 @@ public class ImageReader {
         }
         return array;
     }
+    /**
+     * Konwertuje obraz w postaci BufferedImage na dwuwymiarową tablicę obiektów Pixel.
+     * @param image obiekt BufferedImage reprezentujący obraz
+     * @return dwuwymiarowa tablica obiektów Pixel reprezentujących piksele obrazu
+     */
     public static Pixel[][] get2DPixelArray(BufferedImage image){
         int width = image.getWidth();
         int height = image.getHeight();
@@ -53,7 +78,11 @@ public class ImageReader {
         }
         return array;
     }
-
+    /**
+     * Konwertuje obraz w postaci BufferedImage na skalę szarości.
+     * @param image obiekt BufferedImage reprezentujący obraz
+     * @return dwuwymiarowa tablica liczb zmiennoprzecinkowych reprezentujących obraz w skali szarości
+     */
     public static double[][] convertToGrayScale(BufferedImage image){
         Pixel[][] pixels = get2DPixelArray(image);
         double[][] output = new double[pixels.length][pixels[0].length];
@@ -68,7 +97,10 @@ public class ImageReader {
 
         return  output;
     }
-
+    /**
+     * Zwraca nazwę odczytanego pliku obrazu.
+     * @return nazwa pliku obrazu
+     */
     public static String getFileName() {
         return fileName;
     }

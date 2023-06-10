@@ -1,4 +1,4 @@
-import GUIparts.*;
+import UserInterface.*;
 import ImageOperations.*;
 import SegmentationAlgortithms.*;
 
@@ -24,7 +24,6 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenu ThresholdingItem= new JMenu("Thresholding");
     private static final JMenuItem GlobalThresholdingItem = new JMenuItem("Global Thresholding");
     private static final JMenuItem LocalThresholdingItem = new JMenuItem("Local Thresholding");
-    private static final JMenuItem LaplaceEdgeDetectionItem = new JMenuItem("Laplace");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
     private static JFrame owner;
     private static final String DEFAULT_EXTENSION = "JPG";
@@ -65,29 +64,6 @@ public class MainMenuBar extends JMenuBar {
         LocalThresholdingItem.setFont(MainFrame.getBasicFont());
         ThresholdingItem.setFont(MainFrame.getBasicFont());
 
-        LaplaceEdgeDetectionItem.setFont(MainFrame.getBasicFont());
-        segmentationMenu.add(LaplaceEdgeDetectionItem);
-        LaplaceEdgeDetectionItem.addActionListener(e->{
-            if(Main.hasSegmentedImage()){
-                Main.setImage(Main.getSegmentedImage());
-            }
-            owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            BottomPanel.setProgressBarVisible(true);
-            long start = System.currentTimeMillis();
-            var segmentation = new SobelEdgeDetection(Main.getImage());
-            undo.setEnabled(true);
-
-            long elapsedTimeMillis = System.currentTimeMillis() - start;
-            float elapsedTimeSec = elapsedTimeMillis / 1000F;
-            BottomPanel.setDurationTime(elapsedTimeSec);
-
-            BufferedImage output = segmentation.getOutputImage();
-            Main.setSegmentedImage(output);
-            MainFrame.setImageLabel(output);
-            owner.setCursor(Cursor.getDefaultCursor());
-            BottomPanel.setProgressBarVisible(false);
-            BottomPanel.setDurationInfoVisible(true);
-        });
         segmentationMenu.addSeparator();
 
         segmentationMenu.add(undo);
@@ -133,7 +109,7 @@ public class MainMenuBar extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser imageChooser = new JFileChooser();
-            imageChooser.setCurrentDirectory(new File("./images"));
+            imageChooser.setCurrentDirectory(new File("."));
             imageChooser.addChoosableFileFilter(new ImageFilter());
             imageChooser.setAcceptAllFileFilterUsed(false);
 
@@ -392,14 +368,14 @@ public class MainMenuBar extends JMenuBar {
         }
 
         String getExtension(File f) {
-            String ext = null;
+            String extension = null;
             String s = f.getName();
             int i = s.lastIndexOf('.');
 
             if (i > 0 &&  i < s.length() - 1) {
-                ext = s.substring(i+1).toLowerCase();
+                extension = s.substring(i+1).toLowerCase();
             }
-            return ext;
+            return extension;
         }
     }
 }

@@ -6,6 +6,14 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class ImageSaver {
+    /**
+     * Konwertuje tablicę pikseli na obiekt BufferedImage o podanych wymiarach.
+     *
+     * @param array  lista pikseli reprezentowana przez obiekt ArrayList<Pixel>
+     * @param width  szerokość obrazu wynikowego
+     * @param height wysokość obrazu wynikowego
+     * @return obiekt BufferedImage zawierający przekonwertowany obraz
+     */
     public static BufferedImage convertToBufferedImage(ArrayList<Pixel> array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         int pixel_it = 0;
@@ -16,7 +24,14 @@ public class ImageSaver {
         }
         return outputImage;
     }
-
+    /**
+     * Konwertuje tablicę dwuwymiarowych pikseli na obiekt BufferedImage o podanych wymiarach.
+     *
+     * @param array  dwuwymiarowa tablica pikseli reprezentowana przez obiekt Pixel[][]
+     * @param width  szerokość obrazu wynikowego
+     * @param height wysokość obrazu wynikowego
+     * @return obiekt BufferedImage zawierający przekonwertowany obraz
+     */
     public static BufferedImage convertToBufferedImage(Pixel[][] array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {
@@ -26,7 +41,15 @@ public class ImageSaver {
         }
         return outputImage;
     }
-
+    /**
+     * Konwertuje tablicę dwuwymiarowych wartości pikseli na obiekt BufferedImage o podanych wymiarach.
+     * Wartości pikseli są interpretowane jako składowe koloru RGB.
+     *
+     * @param array  dwuwymiarowa tablica wartości pikseli reprezentowana przez obiekt double[][]
+     * @param width  szerokość obrazu wynikowego
+     * @param height wysokość obrazu wynikowego
+     * @return obiekt BufferedImage zawierający przekonwertowany obraz
+     */
     public static BufferedImage convertToBufferedImage(double[][] array, int width, int height){
         BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int i = 0; i < height; i++) {

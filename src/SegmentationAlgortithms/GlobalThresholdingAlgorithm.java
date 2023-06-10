@@ -1,6 +1,6 @@
 package SegmentationAlgortithms;
 
-import GUIparts.BottomPanel;
+import UserInterface.BottomPanel;
 import ImageOperations.ImageReader;
 import ImageOperations.ImageSaver;
 
@@ -37,7 +37,10 @@ public class GlobalThresholdingAlgorithm {
             }
         }
     }
-
+    /**
+     * Oblicza znormalizowany histogram obrazu.
+     * @return znormalizowany histogram obrazu
+     */
     private double[] getNormalizedHistogram(){
         double[] histogram = new double[L];
         int N = WIDTH*HEIGHT;
@@ -61,30 +64,33 @@ public class GlobalThresholdingAlgorithm {
 
         return  histogram;
     }
-
+    /**
+     * Metoda Otsu, która oblicza optymalną wartość progową.
+     * @return optymalna wartość progowa
+     */
     private int OtsuMethod(){
         double[] p = getNormalizedHistogram();
         int N = WIDTH*HEIGHT;
         int[] k = new int[L];
         double[] omega = new double[L];
-        double[] my = new double[L];
+        double[] mean = new double[L];
         omega[0] = p[0];
-        my[0] = 0;
+        mean[0] = 0;
         BottomPanel.setProgress(1);
         BottomPanel.setProgressMaximum(L*L*L);
         BottomPanel.setProgressLabel("Szukanie progu...");
         for (int i = 1; i < L; i++) {
             SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             omega[i] = omega[i-1] + p[i];
-            my[i] = my[i-1] + (i * p[i]);
+            mean[i] = mean[i-1] + (i * p[i]);
         }
 
-        double mean_lvl = my[L - 1];
+        double mean_lvl = mean[L - 1];
 
         double[] variances= new double[L];
         for (int i = 0; i < L; i++){
             SwingUtilities.invokeLater(BottomPanel::incrementProgress);
-            double numerator = mean_lvl*omega[i] - my[i];
+            double numerator = mean_lvl*omega[i] - mean[i];
             double denominator = omega[i]*(1-omega[i]);
             if(denominator != 0.0)
                 variances[i] = numerator*numerator / denominator;

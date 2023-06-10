@@ -1,4 +1,4 @@
-import GUIparts.BottomPanel;
+import UserInterface.BottomPanel;
 import ImageOperations.ImageRescaler;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
 
         var scrollPane = new JScrollPane(imageLabel);
         imageLabel.setFont(HEADER_FONT);
-        imageLabel.setText("Otwórz plik   CTRL + O");
+        imageLabel.setText("Otwórz plik:  CTRL + O");
         imageLabel.setVerticalAlignment(SwingConstants.CENTER);
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 

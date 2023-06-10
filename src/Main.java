@@ -39,7 +39,7 @@ public class Main {
     }
 
     /*
-    * @return (1) true jezeli obiekt image przechowuje obrazek
+    * @return (1) true jezeli obiekt image przechowuje obraz
     *         (2) false w przeciwnym wypadku*/
     public static boolean hasImage(){
         return originalImage != null;

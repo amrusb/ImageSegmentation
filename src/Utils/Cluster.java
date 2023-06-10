@@ -9,12 +9,23 @@ public class Cluster extends Point3D {
     public Cluster(int x, int y, int z){
         super(x,y,z);
     }
+    /**
+     * Zwiększa rozmiar klastra o 1.
+     */
     public void increaseSize(){
         size++;
     }
+    /**
+     * Zmniejsza rozmiar klastra o 1.
+     */
     public void decreaseSize(){
         size--;
     }
+    /**
+     * Zwraca rozmiar klastra.
+     *
+     * @return rozmiar klastra
+     */
     public int getSize(){
         return size;
     }
