@@ -85,7 +85,6 @@ public class AdaptiveThresholdingAlgorithm {
      * @return obraz wyjściowy po segmentacji
      */
     public BufferedImage getOutputImage() {
-        BufferedImage image = ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
-        return image;
+        return ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
     }
 }

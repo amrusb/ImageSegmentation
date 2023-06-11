@@ -12,17 +12,30 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class RegionGrowingAlgorithm {
-    private static final int colour_threshold = 55;
-    private static double current_threshold;
     private final Pixel[][] pixelArray;
     private final boolean[][] visited;
-    private Queue<Point> points = new LinkedList<Point>();
+    private final Queue<Point> points = new LinkedList<Point>();
     private final int WIDTH;
     private final int HEIGHT;
-    private final int alpha = 4;
-    private final double threshold = 0.2/alpha;
+    private int alpha = 4;
+    private double threshold = 0.2/alpha;
     public RegionGrowingAlgorithm(BufferedImage image, ArrayList<Point> seeds){
         pixelArray = ImageReader.get2DPixelArray(image);
+
+        WIDTH = image.getWidth();
+        HEIGHT = image.getHeight();
+        visited = new boolean[WIDTH][HEIGHT];
+
+        for (boolean[] row:visited) {
+            Arrays.fill(row, false);
+        }
+
+        HSLbasedRegionGrowing(seeds);
+    }
+    public RegionGrowingAlgorithm(BufferedImage image, ArrayList<Point> seeds, int alpha){
+        pixelArray = ImageReader.get2DPixelArray(image);
+        this.alpha = alpha;
+        threshold = 0.2/alpha;
 
         WIDTH = image.getWidth();
         HEIGHT = image.getHeight();
@@ -52,7 +65,7 @@ public class RegionGrowingAlgorithm {
             int G = pixel_seed.getG();
             int B = pixel_seed.getB();
 
-            double I_seed = 0.299 * R + 0.587 * G  + 0.114 * B;
+            double I_seed = (R+ G+ B) / 3.0;
             I_seed/=256;
             double S_seed = 1 - (1/I_seed) * Math.min(Math.min(R, G), B);
             S_seed/=256;
@@ -110,13 +123,22 @@ public class RegionGrowingAlgorithm {
         }
         BottomPanel.setProgress(seeds.size());
     }
+
+    /**
+     * Sprawdza poprawność punktu o podanych współrzędnych.
+     * @param x współrzędna osi odciętych obrazu
+     * @param y współrzędna osi rzędnych obrazu
+     * @return (1) true jeżeli punkt o współrzędnych (x, y) należy do obrazu (2) false w przeciwnym wypadku
+     */
     private boolean checkIfValid(int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
     }
-
+    /**
+     * Zwraca obraz wyjściowy po zastosowaniu segmentacji metodą region growing.
+     * @return obraz wyjściowy po segmentacji
+     */
     public BufferedImage getOutputImage(){
-        BufferedImage image = ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
-        return image;
+        return ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
     }
 
 }

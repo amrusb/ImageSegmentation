@@ -87,7 +87,11 @@ public class BottomPanel extends JPanel {
     public static void setProgressBarVisible(boolean flag){
         progressBar.setVisible(flag);
         progressLabel.setVisible(flag);
-        progressLabel.setText("");
+        if(!flag){
+            progressBar.setValue(0);
+            progressLabel.setText("");
+        }
+
     }
     public static void setProgressLabel(String label){
         progressLabel.setText(label);
@@ -95,11 +99,13 @@ public class BottomPanel extends JPanel {
     public static void setDurationInfoVisible(boolean flag){
         durationInfo.setVisible(flag);
         durationTime.setVisible(flag);
+        if(!flag) durationTime.setText("");
     }
 
     public static void setFileNameVisible(boolean flag){
         fileName.setVisible(flag);
         fileNameInfo.setVisible(flag);
+        if(!flag) fileName.setText("");
     }
     public static void clear(){
         fileName.setText("");

@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class GlobalThresholdingAlgorithm {
-    private double[][] grayScalePixelArray;
+    private final double[][] grayScalePixelArray;
     private final int WIDTH;
     private final int HEIGHT;
     private static final int L = 256;
@@ -46,7 +46,7 @@ public class GlobalThresholdingAlgorithm {
         int N = WIDTH*HEIGHT;
 
         BottomPanel.setProgress(1);
-        BottomPanel.setProgressMaximum(N*L);
+        BottomPanel.setProgressMaximum(WIDTH*HEIGHT);
         BottomPanel.setProgressLabel("Tworzenie histogramu...");
 
         for (int i = 0; i < WIDTH; i++) {
@@ -56,7 +56,9 @@ public class GlobalThresholdingAlgorithm {
                 histogram[value]++;
             }
         }
-
+        BottomPanel.setProgress(1);
+        BottomPanel.setProgressMaximum(L);
+        BottomPanel.setProgressLabel("Normalizacja histogramu...");
         for (int i = 0; i < L; i++) {
             SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             histogram[i] = histogram[i] / N;
@@ -70,13 +72,11 @@ public class GlobalThresholdingAlgorithm {
      */
     private int OtsuMethod(){
         double[] p = getNormalizedHistogram();
-        int N = WIDTH*HEIGHT;
-        int[] k = new int[L];
         double[] omega = new double[L];
         double[] mean = new double[L];
         omega[0] = p[0];
         mean[0] = 0;
-        BottomPanel.setProgress(1);
+        BottomPanel.setProgress(0);
         BottomPanel.setProgressMaximum(L*L*L);
         BottomPanel.setProgressLabel("Szukanie progu...");
         for (int i = 1; i < L; i++) {
@@ -105,9 +105,12 @@ public class GlobalThresholdingAlgorithm {
 
         return threshold;
     }
+    /**
+     * Zwraca obraz wyjściowy po zastosowaniu progowania globalnego.
+     * @return obraz wyjściowy po segmentacji
+     */
     public BufferedImage getOutputImage() {
-        BufferedImage image = ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
-        return image;
+        return ImageSaver.convertToBufferedImage(grayScalePixelArray, WIDTH, HEIGHT);
     }
 
 }

@@ -1,4 +1,5 @@
-import UserInterface.*;
+package UserInterface;
+
 import ImageOperations.*;
 import SegmentationAlgortithms.*;
 
@@ -22,8 +23,8 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
     private static final JMenuItem RegionGrowingItem = new JMenuItem("Region-Growing");
     private static final JMenu ThresholdingItem= new JMenu("Thresholding");
-    private static final JMenuItem GlobalThresholdingItem = new JMenuItem("Global Thresholding");
-    private static final JMenuItem LocalThresholdingItem = new JMenuItem("Local Thresholding");
+    private static final JMenuItem GlobalThresholdingItem = new JMenuItem("Globalne");
+    private static final JMenuItem LocalThresholdingItem = new JMenuItem("Lokalne");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
     private static JFrame owner;
     private static final String DEFAULT_EXTENSION = "JPG";
@@ -32,17 +33,17 @@ public class MainMenuBar extends JMenuBar {
         imageMenu.add(openItem);
         imageMenu.setFont(MainFrame.getBasicFont());
         openItem.setFont(MainFrame.getBasicFont());
-        openItem.setAccelerator(KeyStroke.getKeyStroke("ctrl O"));
+        openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         openItem.addActionListener(new OpenAction());
 
         imageMenu.add(saveItem);
         saveItem.setFont(MainFrame.getBasicFont());
-        saveItem.setAccelerator(KeyStroke.getKeyStroke("ctrl S"));
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         saveItem.addActionListener(new SaveAction());
 
         imageMenu.add(saveAsItem);
         saveAsItem.setFont(MainFrame.getBasicFont());
-        saveAsItem.setAccelerator(KeyStroke.getKeyStroke("ctrl shift S"));
+        saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.ALT_MASK));
         saveAsItem.addActionListener(new SaveAsAction());
         add(imageMenu);
 
@@ -71,8 +72,8 @@ public class MainMenuBar extends JMenuBar {
         undo.setAccelerator(KeyStroke.getKeyStroke("ctrl Z"));
         undo.setEnabled(false);
         undo.addActionListener(e->{
-            BufferedImage image = Main.getImage();
-            Main.setSegmentedImage(null);
+            BufferedImage image = MainFrame.getImage();
+            MainFrame.setSegmentedImage(null);
 
             MainFrame.setImageLabel(image);
             undo.setEnabled(false);
@@ -89,12 +90,10 @@ public class MainMenuBar extends JMenuBar {
         reload();
     }
 
-    public static Frame getOwner() {
-        return owner;
-    }
-
+    /**
+     * Metoda ustawia dostepnosc elementow paska menu w zależności od tego czy użytkownik wybrał plik*/
     public static void reload(){
-        if(Main.hasImage()){
+        if(MainFrame.hasImage()){
             saveItem.setEnabled(true);
             saveAsItem.setEnabled(true);
             segmentationMenu.setEnabled(true);
@@ -116,9 +115,9 @@ public class MainMenuBar extends JMenuBar {
             int result = imageChooser.showOpenDialog(null);
             owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             if(result == JFileChooser.APPROVE_OPTION){
-                Main.setRescaledImage(null);
-                Main.setImage(null);
-                Main.setSegmentedImage(null);
+                MainFrame.setRescaledImage(null);
+                MainFrame.setImage(null);
+                MainFrame.setSegmentedImage(null);
                 BottomPanel.setDurationInfoVisible(false);
                 BottomPanel.setFileNameVisible(true);
                 BottomPanel.clear();
@@ -129,9 +128,9 @@ public class MainMenuBar extends JMenuBar {
 
                 String filePath = imageChooser.getSelectedFile().getAbsolutePath();
                 ImageReader.setFilePath(filePath);
-                Main.setImage(ImageReader.readImage());
+                MainFrame.setImage(ImageReader.readImage());
 
-                MainFrame.setImageLabel(Main.getImage());
+                MainFrame.setImageLabel(MainFrame.getImage());
             }
             reload();
             owner.setCursor(Cursor.getDefaultCursor());
@@ -148,8 +147,8 @@ public class MainMenuBar extends JMenuBar {
             formatName = fileName.substring(fileName.indexOf('.') + 1 );
             try{
                 BufferedImage image;
-                if(Main.hasSegmentedImage()) image = Main.getSegmentedImage();
-                else image = Main.getImage();
+                if(MainFrame.hasSegmentedImage()) image = MainFrame.getSegmentedImage();
+                else image = MainFrame.getImage();
 
                 ImageIO.write(image, formatName, output);
             }
@@ -186,8 +185,8 @@ public class MainMenuBar extends JMenuBar {
                 File output = new File(filePath);
                 try{
                     BufferedImage image;
-                    if(Main.hasSegmentedImage()) image = Main.getSegmentedImage();
-                    else image = Main.getImage();
+                    if(MainFrame.hasSegmentedImage()) image = MainFrame.getSegmentedImage();
+                    else image = MainFrame.getImage();
 
                     ImageIO.write(image, formatName, output);
                 }
@@ -203,10 +202,10 @@ public class MainMenuBar extends JMenuBar {
         public void actionPerformed(ActionEvent e) {
 
             BottomPanel.setDurationInfoVisible(false);
-            if(Main.hasSegmentedImage()){
-                Main.setImage(Main.getSegmentedImage());
+            if(MainFrame.hasSegmentedImage()){
+                MainFrame.setImage(MainFrame.getSegmentedImage());
             }
-            ClusterInputDialog dialog = new ClusterInputDialog(owner, Main.hasRescaledImage());
+            ClusterInputDialog dialog = new ClusterInputDialog(owner, MainFrame.hasRescaledImage());
             dialog.setVisible(true);
 
             int clusterCount = dialog.getClusterCount();
@@ -219,12 +218,11 @@ public class MainMenuBar extends JMenuBar {
                     KMeansAlgorithm segmentation;
 
                     long start = System.currentTimeMillis();
-                    if (original) segmentation = new KMeansAlgorithm(clusterCount, Main.getImage());
-                    else segmentation = new KMeansAlgorithm(clusterCount, Main.getRescaledImage());
+                    if (original) segmentation = new KMeansAlgorithm(clusterCount, MainFrame.getImage());
+                    else segmentation = new KMeansAlgorithm(clusterCount, MainFrame.getRescaledImage());
 
                     long elapsedTimeMillis = System.currentTimeMillis()-start;
                     float elapsedTimeSec = elapsedTimeMillis/1000F;
-                    System.out.println("Czas trwania algortymu: " + elapsedTimeSec + " sec");
                     BottomPanel.setDurationTime(elapsedTimeSec);
 
                     undo.setEnabled(true);
@@ -232,10 +230,10 @@ public class MainMenuBar extends JMenuBar {
 
                     MainFrame.setImageLabel(output);
                     if (!original){
-                        double scale = (double)Main.getImage().getWidth() / (double)output.getWidth();
+                        double scale = (double)MainFrame.getImage().getWidth() / (double)output.getWidth();
                         output = ImageRescaler.rescaleImage(output, scale);
                     }
-                    Main.setSegmentedImage(output);
+                    MainFrame.setSegmentedImage(output);
                     owner.setCursor(Cursor.getDefaultCursor());
                     BottomPanel.setProgressBarVisible(false);
                     BottomPanel.setDurationInfoVisible(true);
@@ -247,27 +245,27 @@ public class MainMenuBar extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             BottomPanel.setDurationInfoVisible(false);
-            if(Main.hasSegmentedImage()){
-                Main.setImage(Main.getSegmentedImage());
+            if(MainFrame.hasSegmentedImage()){
+                MainFrame.setImage(MainFrame.getSegmentedImage());
             }
             BufferedImage working_image;
 
-            if(Main.hasRescaledImage()) working_image = Main.getRescaledImage();
-            else working_image = Main.getImage();
+            if(MainFrame.hasRescaledImage()) working_image = MainFrame.getRescaledImage();
+            else working_image = MainFrame.getImage();
 
             double scale;
-            if(Main.hasRescaledImage()) scale = (double)Main.getImage().getWidth() / (double)Main.getRescaledImage().getWidth();
+            if(MainFrame.hasRescaledImage()) scale = (double)MainFrame.getImage().getWidth() / (double)MainFrame.getRescaledImage().getWidth();
             else scale = 1;
             RegionChooseDialog dialog = new RegionChooseDialog(owner, working_image, scale);
             dialog.setVisible(true);
             var seedsArray = dialog.getRegions();
-
+            int alpha = dialog.getAlpha();
             if(seedsArray.size() > 0){
                 new Thread(() -> {
                     BottomPanel.setProgressBarVisible(true);
                     owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     long start = System.currentTimeMillis();
-                    var segmentation = new RegionGrowingAlgorithm(Main.getImage(), seedsArray);
+                    var segmentation = new RegionGrowingAlgorithm(MainFrame.getImage(), seedsArray, alpha);
                     undo.setEnabled(true);
 
                     long elapsedTimeMillis = System.currentTimeMillis() - start;
@@ -275,7 +273,7 @@ public class MainMenuBar extends JMenuBar {
                     BottomPanel.setDurationTime(elapsedTimeSec);
 
                     BufferedImage output = segmentation.getOutputImage();
-                    Main.setSegmentedImage(output);
+                    MainFrame.setSegmentedImage(output);
                     MainFrame.setImageLabel(output);
                     owner.setCursor(Cursor.getDefaultCursor());
                     BottomPanel.setProgressBarVisible(false);
@@ -288,14 +286,14 @@ public class MainMenuBar extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             BottomPanel.setDurationInfoVisible(false);
-            if(Main.hasSegmentedImage()){
-                Main.setImage(Main.getSegmentedImage());
+            if(MainFrame.hasSegmentedImage()){
+                MainFrame.setImage(MainFrame.getSegmentedImage());
             }
             new Thread(() -> {
                 owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 BottomPanel.setProgressBarVisible(true);
                 long start = System.currentTimeMillis();
-                var segmentation = new GlobalThresholdingAlgorithm(Main.getImage());
+                var segmentation = new GlobalThresholdingAlgorithm(MainFrame.getImage());
                 undo.setEnabled(true);
 
                 long elapsedTimeMillis = System.currentTimeMillis() - start;
@@ -303,7 +301,7 @@ public class MainMenuBar extends JMenuBar {
                 BottomPanel.setDurationTime(elapsedTimeSec);
 
                 BufferedImage output = segmentation.getOutputImage();
-                Main.setSegmentedImage(output);
+                MainFrame.setSegmentedImage(output);
                 MainFrame.setImageLabel(output);
                 owner.setCursor(Cursor.getDefaultCursor());
                 BottomPanel.setProgressBarVisible(false);
@@ -315,22 +313,22 @@ public class MainMenuBar extends JMenuBar {
         @Override
         public void actionPerformed(ActionEvent e) {
             BottomPanel.setDurationInfoVisible(false);
-            if(Main.hasSegmentedImage()){
-                Main.setImage(Main.getSegmentedImage());
+            if(MainFrame.hasSegmentedImage()){
+                MainFrame.setImage(MainFrame.getSegmentedImage());
             }
             new Thread(() -> {
                 owner.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 BottomPanel.setProgressBarVisible(true);
                 long start = System.currentTimeMillis();
                 undo.setEnabled(true);
-                var segmentation = new AdaptiveThresholdingAlgorithm(Main.getImage());
+                var segmentation = new AdaptiveThresholdingAlgorithm(MainFrame.getImage());
 
                 long elapsedTimeMillis = System.currentTimeMillis() - start;
                 float elapsedTimeSec = elapsedTimeMillis / 1000F;
                 BottomPanel.setDurationTime(elapsedTimeSec);
 
                 BufferedImage output = segmentation.getOutputImage();
-                Main.setSegmentedImage(output);
+                MainFrame.setSegmentedImage(output);
                 MainFrame.setImageLabel(output);
                 owner.setCursor(Cursor.getDefaultCursor());
                 BottomPanel.setProgressBarVisible(false);

@@ -25,7 +25,7 @@ public class KMeansAlgorithm {
         this.pixelArray = ImageReader.getPixelArray(image);
         WIDTH = image.getWidth();
         HEIGHT = image.getHeight();
-        clusters = new ArrayList<Cluster>(clustersCount);
+        clusters = new ArrayList<>(clustersCount);
 
         KMeansPP();
         HamerlySegmentation();
@@ -43,7 +43,6 @@ public class KMeansAlgorithm {
         Arrays.fill(lowerBounds, 0.0);
         Arrays.fill(assignments, -1);
 
-        int distanc_counter = 0;
         int iteration;
 
         BottomPanel.setProgress(0);
@@ -63,9 +62,8 @@ public class KMeansAlgorithm {
                     double minDistance = Double.MAX_VALUE;
                     double secondMinDistance = Double.MAX_VALUE;
                     int minIndex = 0;
-                    distanc_counter++;
                     for (int i = 0; i < clustersCount; i++) {
-                        double distance = Math.sqrt(Calculations.calculateDistanceSquared(clusters.get(i), pixel));
+                        double distance = Calculations.calculateDistance(clusters.get(i), pixel);
                         if (distance < minDistance) {
                             secondMinDistance = minDistance;
                             minDistance = distance;
@@ -161,13 +159,7 @@ public class KMeansAlgorithm {
         BottomPanel.setProgressLabel("Inicjalizajca klastrów...");
         main_for:
         for (int i = 1; i < clustersCount; i++) {
-            int iteration = i;
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    BottomPanel.setProgress(iteration);
-                }
-            });
+            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             double sum = 0.0;
 
             for (int j = 0; j < pixelArraySize; j++) {
@@ -195,9 +187,11 @@ public class KMeansAlgorithm {
             clusters.add(new Cluster(temp_pixel));
         }
     }
-
+    /**
+     * Zwraca obraz wyjściowy po segmentowaniu obrazu algorytmem k-means.
+     * @return obraz wyjściowy po segmentacji
+     */
     public BufferedImage getOutputImage(){
-        BufferedImage image = ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
-        return image;
+        return ImageSaver.convertToBufferedImage(pixelArray, WIDTH, HEIGHT);
     }
 }

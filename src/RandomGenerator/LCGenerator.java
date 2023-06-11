@@ -7,7 +7,6 @@ public class LCGenerator {
     private double value;
 
     public LCGenerator(long seed){
-        //LocalDateTime.now().getNano() + (LocalDateTime.now().getSecond() * LocalDateTime.now().getMinute())
         if(seed % 2 == 0) seed+=1;
         this.value = seed;
     }
