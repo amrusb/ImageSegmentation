@@ -120,9 +120,7 @@ public class KMeansAlgorithm {
                     clusters.get(i).setX(new_x);
                     clusters.get(i).setY(new_y);
                     clusters.get(i).setZ(new_z);
-                } else {
-                    notChanged++;
-                }
+                } else notChanged++;
             }
 
             if (notChanged == clustersCount)

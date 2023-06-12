@@ -21,8 +21,8 @@ public class MainMenuBar extends JMenuBar {
     private static final JMenuItem saveAsItem = new JMenuItem("Zapisz jako");
     private static final JMenu segmentationMenu = new JMenu("Segmentacja");
     private static final JMenuItem kmeanItem = new JMenuItem("K-means");
-    private static final JMenuItem RegionGrowingItem = new JMenuItem("Region-Growing");
-    private static final JMenu ThresholdingItem= new JMenu("Thresholding");
+    private static final JMenuItem RegionGrowingItem = new JMenuItem("Region Growing");
+    private static final JMenu ThresholdingItem= new JMenu("Progowanie");
     private static final JMenuItem GlobalThresholdingItem = new JMenuItem("Globalne");
     private static final JMenuItem LocalThresholdingItem = new JMenuItem("Lokalne");
     private static final JMenuItem undo = new JMenuItem("Cofnij");
@@ -258,6 +258,7 @@ public class MainMenuBar extends JMenuBar {
             else scale = 1;
             RegionChooseDialog dialog = new RegionChooseDialog(owner, working_image, scale);
             dialog.setVisible(true);
+
             var seedsArray = dialog.getRegions();
             int alpha = dialog.getAlpha();
             if(seedsArray.size() > 0){

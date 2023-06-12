@@ -49,12 +49,11 @@ public class RegionGrowingAlgorithm {
     }
 
     private void HSLbasedRegionGrowing(ArrayList<Point> seeds){
-        BottomPanel.setProgress(1);
+        BottomPanel.setProgress(0);
         BottomPanel.setProgressMaximum(seeds.size());
         BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
             SwingUtilities.invokeLater(BottomPanel::incrementProgress);
-
             var pixel_seed = pixelArray[seed.getX()][seed.getY()];
 
             ArrayList<Pixel> pixelList = new ArrayList<>();
@@ -67,15 +66,17 @@ public class RegionGrowingAlgorithm {
 
             double I_seed = (R+ G+ B) / 3.0;
             I_seed/=256;
+
             double S_seed = 1 - (1/I_seed) * Math.min(Math.min(R, G), B);
             S_seed/=256;
-            double H_seed  = (R - G/2 - B/2)/ Math.sqrt(R*R+G*G+B*B-R*G-R*B-G*B);
+            double H_seed  = (R - G/2.0 - B/2.0)/ Math.sqrt(R*R+G*G+B*B-R*G-R*B-G*B);
             H_seed  = Math.acos(H_seed );
 
             if(B>G) H_seed = 360 - H_seed;
             H_seed /= 360;
             H_seed/=256;
             while(!points.isEmpty()){
+
                 var current = points.poll();
                 int x = current.getX();
                 int y = current.getY();
@@ -88,11 +89,11 @@ public class RegionGrowingAlgorithm {
                 int cB = current_pixel.getB();
 
 
-                double I =  0.299 * cR + 0.587 * cG  + 0.114 * cB;
+                double I =  (cR + cG + cB) / 3.0;
                 I/=256;
                 double S = 1 - (1/I) * Math.min(Math.min(cR, cG), cB);
                 S/=256;
-                double H = (cR - cG/2 - cB/2)/ Math.sqrt(cR*cR+cG*cG+cB*cB-cR*cG-cR*cB-cG*cB);
+                double H = (cR - cG/2.0 - cB/2.0)/ Math.sqrt(cR*cR+cG*cG+cB*cB-cR*cG-cR*cB-cG*cB);
                 H = Math.acos(H);
 
                 if(cB > cG) H = 360 - H;

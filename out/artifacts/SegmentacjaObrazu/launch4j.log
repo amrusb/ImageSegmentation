@@ -1,0 +1,15 @@
+
+
+Version:	3.50
+CmdLine:	D:\05. Szkolenia\07. W³asne projekty\06.ImageSegmentantion\ImageSegmentatnion\out\artifacts\SegmentacjaObrazu\SegmentacjaObrazu.exe --l4j-debug
+JNI:		No
+WOW64:		Yes
+Create mutex:	SegmentacjaObrazu.exe
+Working dir:	D:\05. Szkolenia\07. W³asne projekty\06.ImageSegmentantion\ImageSegmentatnion\out\artifacts\SegmentacjaObrazu\.
+Requires JDK:	Yes
+Requires 64-Bit: No
+Java min ver:	
+Java max ver:	
+JRE paths:	JRE
+Check launcher:	D:\05. Szkolenia\07. W³asne projekty\06.ImageSegmentantion\ImageSegmentatnion\out\artifacts\SegmentacjaObrazu\JRE\bin\javaw.exe (not found)
+Error msg:	This application requires a Java Runtime Environment.

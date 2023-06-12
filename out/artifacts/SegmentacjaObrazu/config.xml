@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>D:\05. Szkolenia\07. Własne projekty\06.ImageSegmentantion\ImageSegmentatnion\out\artifacts\SegmentacjaObrazu\SegmentacjaObrazu.jar</jar>
+  <outfile>D:\05. Szkolenia\07. Własne projekty\06.ImageSegmentantion\ImageSegmentatnion\out\artifacts\SegmentacjaObrazu\SegmentacjaObrazu.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>true</restartOnCrash>
+  <manifest></manifest>
+  <icon></icon>
+  <singleInstance>
+    <mutexName>SegmentacjaObrazu.exe</mutexName>
+    <windowTitle>SegmentacjaObrazu.exe</windowTitle>
+  </singleInstance>
+  <jre>
+    <path>JRE</path>
+    <requiresJdk>true</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>

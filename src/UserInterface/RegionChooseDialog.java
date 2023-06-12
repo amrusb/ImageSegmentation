@@ -20,6 +20,7 @@ public class RegionChooseDialog extends JDialog {
     private final int DIALOG_HEIGHT;
     private double scale;
     private final JFormattedTextField alphaField;
+    private final JButton okButton = new JButton("Zatwierdź");
     private final JSlider slider = new JSlider(2, 9, 4);
     public RegionChooseDialog(JFrame owner, BufferedImage image, double scale){
         super(owner, "Algorytm region growing", true);
@@ -29,12 +30,12 @@ public class RegionChooseDialog extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         if(image.getWidth() >= image.getHeight() ) {
-            DIALOG_WIDTH = image.getWidth();
-            DIALOG_HEIGHT = image.getHeight() + 170;
+            DIALOG_WIDTH = image.getWidth() + 15;
+            DIALOG_HEIGHT = image.getHeight() + 100;
         }
         else{
-            DIALOG_WIDTH = image.getWidth() * 2 + 15;
-            DIALOG_HEIGHT = image.getHeight() + 15;
+            DIALOG_WIDTH = image.getWidth() + 225;
+            DIALOG_HEIGHT = image.getHeight() + 40;
         }
 
         double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -44,22 +45,9 @@ public class RegionChooseDialog extends JDialog {
         setBounds(x, y, DIALOG_WIDTH, DIALOG_HEIGHT);
 
 
-        var choseAlphaPanel = new JPanel();
-        choseAlphaPanel.setLayout(new GridBagLayout());
-        var constr = new GridBagConstraints();
-        constr.weightx = 100;
-        constr.weighty = 100;
-
-        constr.gridx = 0;
-        constr.gridy = 0;
-        constr.gridwidth = 1;
-        constr.gridheight = 1;
-        constr.fill = GridBagConstraints.VERTICAL;
-        constr.anchor = GridBagConstraints.EAST;
-        constr.insets.set(15, 0, 0, 10);
         var alphaLabel = new JLabel("Wartość parametru α:");
         alphaLabel.setFont(MainFrame.getBasicBoldFont());
-        choseAlphaPanel.add(alphaLabel, constr);
+
         NumberFormat intFormat = NumberFormat.getIntegerInstance();
         NumberFormatter numberFormatter = new NumberFormatter(intFormat);
         numberFormatter.setAllowsInvalid(false);
@@ -69,15 +57,7 @@ public class RegionChooseDialog extends JDialog {
         numberFormatter.setMinimum(0L);
         alphaField.setEditable(false);
         alphaField.setBorder(BorderFactory.createEmptyBorder());
-        constr.insets.set(15, 10, 0, 0);
-        constr.fill = GridBagConstraints.HORIZONTAL;
-        constr.gridx = 1;
-        choseAlphaPanel.add(alphaField, constr);
 
-        constr.gridx = 0;
-        constr.gridwidth = 2;
-        constr.gridy = 1;
-        constr.insets.set(5, 5, 0, 5);
         slider.setPaintTicks(true);
         slider.setSnapToTicks(true);
         slider.setMajorTickSpacing(2);
@@ -89,39 +69,77 @@ public class RegionChooseDialog extends JDialog {
             alphaField.setText("" + source.getValue());
         });
 
-        choseAlphaPanel.add(slider, constr);
         var buttonPanel = new JPanel();
-        var okButton = new JButton("Zatwierdź");
         var endButton = new JButton("Zakończ");
 
         buttonPanel.add(okButton);
+        okButton.setEnabled(false);
         okButton.addActionListener(e-> dispose());
         buttonPanel.add(endButton);
         endButton.addActionListener(e->{
             regions = new ArrayList<>();
             dispose();
         });
-        constr.gridy = 2;
-        constr.insets.set(5, 5, 10, 10);
 
-        choseAlphaPanel.add(buttonPanel, constr);
 
         if(image.getWidth() >= image.getHeight()){
             var layout = new BorderLayout();
             setLayout(layout);
             ImagePanel imagePanel = new ImagePanel(image);
+            imagePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
             add(imagePanel, BorderLayout.NORTH);
-
-            add(choseAlphaPanel, BorderLayout.SOUTH);
+            var bottomPanel = new JPanel();
+            bottomPanel.setLayout(new GridBagLayout());
+            var c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = c.gridheight = 1;
+            c.insets.set(0,0,5,5);
+            bottomPanel.add(slider, c);
+            c.gridx = 1;
+            c.insets.set(0,5,5,5);
+            bottomPanel.add(alphaLabel, c);
+            c.gridx = 2;
+            c.insets.set(0,5,5,5);
+            bottomPanel.add(alphaField, c);
+            c.gridx = 3;
+            c.anchor = GridBagConstraints.CENTER;
+            bottomPanel.add(buttonPanel, c);
+            add(bottomPanel, BorderLayout.SOUTH);
         }else{
-            var layout = new GridLayout(1, 2);
+            var layout = new BorderLayout();
             setLayout(layout);
             ImagePanel imagePanel = new ImagePanel(image);
-            add(imagePanel);
+            imagePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            add(imagePanel, BorderLayout.CENTER);
+
             var sidePanel = new JPanel();
-            sidePanel.setLayout(new BorderLayout());
-            sidePanel.add(choseAlphaPanel, BorderLayout.SOUTH);
-            add(sidePanel);
+            sidePanel.setLayout(new GridBagLayout());
+            var c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.gridheight = 1;
+            c.fill = GridBagConstraints.VERTICAL;
+            c.anchor = GridBagConstraints.EAST;
+            c.insets.set(15, 5, 5, 5);
+            sidePanel.add(alphaLabel, c);
+
+            c.insets.set(15, 5, 5, 5);
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.gridx = 1;
+            sidePanel.add(alphaField, c);
+
+            c.gridx = 0;
+            c.gridwidth = 2;
+            c.gridy = 1;
+            c.insets.set(5, 5, 0, 5);
+            sidePanel.add(slider, c);
+
+            c.gridy = 2;
+            c.insets.set(5, 5, 15, 5);
+            sidePanel.add(buttonPanel,c);
+            add(sidePanel, BorderLayout.EAST);
         }
     }
     public int getAlpha(){return Integer.parseInt(alphaField.getText()); }
@@ -146,7 +164,7 @@ public class RegionChooseDialog extends JDialog {
             g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 
             for (Ellipse2D circle: circles) {
-                g2.setPaint(new Color(255, 255, 255, 80));
+                g2.setPaint(new Color(255, 255, 255, 182));
                 g2.fill(circle);
                 g2.setPaint(Color.BLACK);
                 g2.draw(circle);
@@ -183,6 +201,7 @@ public class RegionChooseDialog extends JDialog {
             public void mousePressed(MouseEvent e) {
                 if(findPoint(e.getPoint()) == null)
                     addPoint(e.getPoint());
+                okButton.setEnabled(!regions.isEmpty());
 
             }
 
@@ -192,6 +211,7 @@ public class RegionChooseDialog extends JDialog {
                 if(current_circle != null && e.getClickCount() >= 2){
                     removePoint(current_circle);
                 }
+                okButton.setEnabled(!regions.isEmpty());
             }
         }
 
