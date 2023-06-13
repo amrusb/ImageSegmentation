@@ -50,10 +50,9 @@ public class RegionGrowingAlgorithm {
 
     private void HSLbasedRegionGrowing(ArrayList<Point> seeds){
         BottomPanel.setProgress(0);
-        BottomPanel.setProgressMaximum(seeds.size());
+        BottomPanel.setProgressMaximum(WIDTH*HEIGHT);
         BottomPanel.setProgressLabel("Region Growing...");
         for (Point seed: seeds) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
             var pixel_seed = pixelArray[seed.getX()][seed.getY()];
 
             ArrayList<Pixel> pixelList = new ArrayList<>();
@@ -76,7 +75,7 @@ public class RegionGrowingAlgorithm {
             H_seed /= 360;
             H_seed/=256;
             while(!points.isEmpty()){
-
+                BottomPanel.incrementProgress();
                 var current = points.poll();
                 int x = current.getX();
                 int y = current.getY();
@@ -114,7 +113,7 @@ public class RegionGrowingAlgorithm {
                     if(checkIfValid(x+1, y)) points.add(new Point(x+1, y));
                 }
             }
-
+            BottomPanel.decrementProgressMaximum(pixelList.size());
             R/=pixelList.size();
             G/=pixelList.size();
             B/=pixelList.size();
@@ -122,6 +121,7 @@ public class RegionGrowingAlgorithm {
                 p.setPixelValue(R, G, B);
             }
         }
+        BottomPanel.setProgressMaximum(seeds.size());
         BottomPanel.setProgress(seeds.size());
     }
 

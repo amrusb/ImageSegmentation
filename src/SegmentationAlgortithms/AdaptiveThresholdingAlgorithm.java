@@ -32,7 +32,7 @@ public class AdaptiveThresholdingAlgorithm {
 
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+                BottomPanel.incrementProgress();
                 int x1 = Math.max(0, x - s / 2);
                 int y1 = Math.max(0, y - s / 2);
                 int x2 = Math.min(WIDTH - 1, x + s / 2);
@@ -62,18 +62,18 @@ public class AdaptiveThresholdingAlgorithm {
         integralImage[0][0] = (int)grayScalePixelArray[0][0];
 
         for (int x = 1; x < WIDTH; x++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             integralImage[x][0] = integralImage[x - 1][0] + (int)grayScalePixelArray[x][0];
         }
 
         for (int y = 1; y < HEIGHT; y++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             integralImage[0][y] = integralImage[0][y - 1] + (int)grayScalePixelArray[0][y];
         }
 
         for (int x = 1; x < WIDTH; x++) {
             for (int y = 1; y < HEIGHT; y++) {
-                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+                BottomPanel.incrementProgress();
                 integralImage[x][y] = integralImage[x - 1][y] + integralImage[x][y - 1]
                         - integralImage[x - 1][y - 1] + (int)grayScalePixelArray[x][y];
             }

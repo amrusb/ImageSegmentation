@@ -49,7 +49,7 @@ public class KMeansAlgorithm {
         BottomPanel.setProgressMaximum(MAX_ITERATIONS - 1);
         BottomPanel.setProgressLabel("K-means...");
         for (iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             for (int index = 0; index < size; index++) {
 
                 var pixel = pixelArray.get(index);
@@ -157,7 +157,7 @@ public class KMeansAlgorithm {
         BottomPanel.setProgressLabel("Inicjalizajca klastrów...");
         main_for:
         for (int i = 1; i < clustersCount; i++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             double sum = 0.0;
 
             for (int j = 0; j < pixelArraySize; j++) {

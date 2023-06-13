@@ -74,6 +74,9 @@ public class BottomPanel extends JPanel {
     public static void setDurationTime(float time){
         durationTime.setText(time + " sec");
     }
+    public static void decrementProgressMaximum(int value){
+        progressBar.setMaximum(progressBar.getMaximum() - value);
+    }
     public static void setProgress(int value) {
         progressBar.setValue(value);
         progressBar.repaint();

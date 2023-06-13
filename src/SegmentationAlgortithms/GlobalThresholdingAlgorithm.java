@@ -29,7 +29,7 @@ public class GlobalThresholdingAlgorithm {
         BottomPanel.setProgressLabel("Thresholding...");
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+                BottomPanel.incrementProgress();
                 if(grayScalePixelArray[i][j] <= threshold){
                     grayScalePixelArray[i][j] = 0;
                 }
@@ -51,7 +51,7 @@ public class GlobalThresholdingAlgorithm {
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+                BottomPanel.incrementProgress();
                 int value = (int)Math.ceil(grayScalePixelArray[i][j]);
                 histogram[value]++;
             }
@@ -60,7 +60,7 @@ public class GlobalThresholdingAlgorithm {
         BottomPanel.setProgressMaximum(L);
         BottomPanel.setProgressLabel("Normalizacja histogramu...");
         for (int i = 0; i < L; i++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             histogram[i] = histogram[i] / N;
         }
 
@@ -80,7 +80,7 @@ public class GlobalThresholdingAlgorithm {
         BottomPanel.setProgressMaximum(L*L*L);
         BottomPanel.setProgressLabel("Szukanie progu...");
         for (int i = 1; i < L; i++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             omega[i] = omega[i-1] + p[i];
             mean[i] = mean[i-1] + (i * p[i]);
         }
@@ -89,7 +89,7 @@ public class GlobalThresholdingAlgorithm {
 
         double[] variances= new double[L];
         for (int i = 0; i < L; i++){
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             double numerator = mean_lvl*omega[i] - mean[i];
             double denominator = omega[i]*(1-omega[i]);
             if(denominator != 0.0)
@@ -99,7 +99,7 @@ public class GlobalThresholdingAlgorithm {
 
         int threshold = 0;
         for (int i = 1; i < L; i++) {
-            SwingUtilities.invokeLater(BottomPanel::incrementProgress);
+            BottomPanel.incrementProgress();
             if(variances[i] > variances[threshold]) threshold = i;
         }
 
